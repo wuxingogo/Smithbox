@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Octokit;
 using SoulsFormats;
 using StudioCore.Editors.Common;
+using StudioCore.Editors.MapEditor;
 using StudioCore.Editors.MetadataEditor;
 using StudioCore.Logger;
 using StudioCore.Renderer;
@@ -456,29 +457,52 @@ public class ProjectOrchestrator : IDisposable
     /// </summary>
     public Task ReloadProject(ProjectEntry curProject)
     {
-        var camera = curProject.Handler?.MapEditor?.ViewHandler?.ActiveView?.ViewportHandler?.ActiveViewport?.Viewport?.ViewportCamera;
-        if (camera == null)
-            return LoadProject(curProject, false, null, LoadFocus.ProjectEditor);
-
-        var pose = camera.CameraTransform;
-        var origin = camera.CameraOrigin;
-        var mode = camera.ViewMode;
-        var size = camera.OrthographicSize;
-        var focusDistance = camera.FocusDistance;
-        var presetOrtho = camera.EnteredOrthographicForView;
+        var views = curProject.Handler?.MapEditor?.ViewHandler;
+        var maps = curProject.Handler?.MapData?.PrimaryBank?.Maps;
+        var openViews = views?.Views.Where(view => view != null).Select(view => new
+        {
+            Active = view == views.ActiveView,
+            Maps = maps?.Where(entry => entry.Value?.MapContainer is { LoadState: MapContentLoadState.Loaded } map
+                && (map.OwnerView ?? views.ActiveView) == view).Select(entry => entry.Key.Filename).ToArray() ?? []
+        }).ToArray();
+        var camera = views?.ActiveView?.ViewportHandler?.ActiveViewport?.Viewport?.ViewportCamera;
+        var pose = camera?.CameraTransform;
+        var origin = camera?.CameraOrigin;
+        var mode = camera?.ViewMode;
+        var size = camera?.OrthographicSize;
+        var focusDistance = camera?.FocusDistance;
+        var presetOrtho = camera?.EnteredOrthographicForView;
 
         return LoadProject(curProject, false, () =>
         {
-            var restored = curProject.Handler?.MapEditor?.ViewHandler?.ActiveView?.ViewportHandler?.ActiveViewport?.Viewport?.ViewportCamera;
-            if (restored == null)
+            var newViews = curProject.Handler?.MapEditor?.ViewHandler;
+            if (newViews == null)
                 return;
 
-            restored.CameraTransform = pose;
-            restored.CameraOrigin = origin;
-            restored.ViewMode = mode;
-            restored.OrthographicSize = size;
-            restored.FocusDistance = focusDistance;
-            restored.EnteredOrthographicForView = presetOrtho;
+            var available = curProject.Handler.MapData?.PrimaryBank?.Maps.Keys.Select(key => key.Filename).ToHashSet();
+            var active = newViews.ActiveView;
+            for (int i = 0; i < (openViews?.Length ?? 0); i++)
+            {
+                var view = i == 0 ? newViews.ActiveView : newViews.AddView();
+                if (openViews[i].Active)
+                    active = view;
+                foreach (var id in openViews[i].Maps)
+                {
+                    if (available?.Contains(id) == true)
+                        view.Universe.LoadMap(id);
+                }
+            }
+            newViews.ActiveView = active;
+            var restored = active?.ViewportHandler?.ActiveViewport?.Viewport?.ViewportCamera;
+            if (restored == null || !pose.HasValue)
+                return;
+
+            restored.CameraTransform = pose.Value;
+            restored.CameraOrigin = origin.Value;
+            restored.ViewMode = mode.Value;
+            restored.OrthographicSize = size.Value;
+            restored.FocusDistance = focusDistance.Value;
+            restored.EnteredOrthographicForView = presetOrtho.Value;
             restored.UpdateProjectionMatrix();
         }, LoadFocus.ProjectEditor);
     }

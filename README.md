@@ -5,6 +5,17 @@ Smithbox is a modding tool for Elden Ring, Elden Ring: Nightreign, Armored Core 
 [![Github All Releases](https://img.shields.io/github/downloads/vawser/Smithbox/total.svg)](https://github.com/vawser/Smithbox/releases/latest)
 [![Smithbox Discord](https://img.shields.io/badge/Discord%20-%237289DA.svg?&logo=discord&logoColor=white)](https://discord.gg/5p9bRKkK4J)
 
+## 本分支修改
+
+- **工程重载**：重新打开各地图编辑视图中已加载的地图，使用磁盘上的最新内容。已关闭或已从工程移除的地图会跳过。
+- **部署到 G 盘**：关闭 Smithbox，双击仓库根目录的 `DeployToG.bat`，即可将发布目录中的 `Smithbox.Program.dll` 和本 README 复制到 `G:\DarksoulsMod\Tools\Smithbox-2.2.6-FenceFix`。
+
+- **地图视口**：重新加载同一工程时，恢复当前地图视口的相机位置、朝向、观察中心、视图模式、正交缩放和对焦距离。
+- **相机速度**：慢速滑块范围为 0.1–20，常速为 0.1–200，快速为 5–9999。
+- **Vulkan 兼容性**：在 Vulkan 1.2 兼容路径中按显卡支持的扩展查询功能，并在设备支持时启用图像访问健壮性（`robustImageAccess`）。
+- **贴图工具**：`Codex/Tools/WallTextureCompare` 用于检查墙面贴图。其恢复模式保留目标 DDS 头，替换兼容的 BC1 压缩数据，并回读校验重打包的贴图档案。
+- **开发约定**：`AGENTS.md` 记录临时工具、诊断日志、文件归档和手动验证的约定。`.gitignore` 增加项目文件及 PNG、DDS、TPF 分卷文件的忽略规则。
+
 ## Key Features
 - **Map Editor**: a visual editor for editing maps.
 - **Model Editor**: a model editor for viewing and editing models. Similar to the FLVER Editor.

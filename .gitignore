@@ -390,3 +390,8 @@ liboo2core*
 /Documentation/Media
 /Documentation/Memory
 /Claude
+*.csproj
+*.PNG
+*.dds
+*.tpfbhd
+*.tpfbdt
