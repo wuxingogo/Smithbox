@@ -33,6 +33,13 @@ public class RowListContext
     public PropertyInfo CompareColumnProperty { get; set; }
 
     public HashSet<Param.Row> VanillaDiffCache { get; set; }
+
+    /// <summary>
+    /// The row IDs the vanilla param has, or null when vanilla has no such param. A diff row whose ID isn't here
+    /// is Added rather than Modified (VanillaDiffCache holds both: a row with no vanilla match counts as changed).
+    /// </summary>
+    public HashSet<int> VanillaRowIds { get; set; }
+
     /// <summary>
     /// Per aux bank, the IDs of its rows that differ from vanilla and from primary. The aux caches hold the aux
     /// bank's own row objects, so primary rows are matched to them by ID.
@@ -120,6 +127,7 @@ public class ParamRowWindow
 
             Context.VanillaDiffCache = Editor.Project.Handler.ParamData.PrimaryBank
                 .GetVanillaDiffRows(activeParam);
+            Context.VanillaRowIds = GetVanillaRowIds(activeParam);
             // ID sets, cached per diff set (cleared when the diffs are refreshed), so each row's test is a lookup.
             // Each row used to scan every aux diff set, every frame.
             Context.AuxDiffCaches = Editor.Project.Handler.ParamData.AuxBanks
@@ -943,7 +951,15 @@ public class ParamRowWindow
                 _keyFocusRow = null;
             }
 
+            var pushedColors = PushRowDiffColors(r, selected);
+
             var clicked = ImGui.Selectable($@"{label}##{selectionCacheIndex}_id", selected);
+
+            // Popped before the drag tooltip and context menu, so they keep the normal colours
+            if (pushedColors > 0)
+            {
+                ImGui.PopStyleColor(pushedColors);
+            }
 
             HandleRowSelectableInput(clicked, p, r, true);
 
@@ -1061,6 +1077,22 @@ public class ParamRowWindow
     /// The IDs in a diff set, cached against that set object. A diff refresh publishes new set objects and clears
     /// the Param Editor's caches, so the IDs are rebuilt then.
     /// </summary>
+    /// <summary>
+    /// The vanilla param's row IDs, cached on the vanilla param (which is never edited), or null when vanilla lacks
+    /// the param. Then every row stays Modified: with no vanilla param to compare, nothing can be called added.
+    /// </summary>
+    private HashSet<int> GetVanillaRowIds(string activeParam)
+    {
+        var vanillaBank = Editor.Project.Handler.ParamData.VanillaBank;
+
+        if (activeParam == null || vanillaBank?.Params == null ||
+            !vanillaBank.Params.TryGetValue(activeParam, out var vanillaParam) || vanillaParam == null)
+            return null;
+
+        return CacheBank.GetCached(Editor, vanillaParam, "rowListVanillaRowIds",
+            () => vanillaParam.Rows.Select(r => r.ID).ToHashSet());
+    }
+
     private HashSet<int> GetDiffIds(HashSet<Param.Row> diffRows)
     {
         if (diffRows == null || diffRows.Count == 0)
@@ -1071,9 +1103,16 @@ public class ParamRowWindow
 
     private static readonly HashSet<int> EmptyIds = new();
 
-    private void DisplayRow(bool[] selectionCache, int selectionCacheIndex,
-        List<Param.Row> p, Param.Row r, bool isPinned)
+    /// <summary>
+    /// Pushes the modified / aux-diff colours for a row's Selectable: the text colour, and (when the Modified
+    /// Background option is on) the row background - drawn directly when unselected, or pushed as the Header colour
+    /// when selected. Returns the number of style colours pushed, to pop right after the Selectable. Shared by the
+    /// ID and Name columns so the two always match.
+    /// </summary>
+    private int PushRowDiffColors(Param.Row r, bool selected)
     {
+        var pushed = 0;
+
         // r belongs to the primary bank, and Context.VanillaDiffCache holds the primary
         // bank's own row instances, so a direct reference lookup is valid here and (unlike
         // a plain ID lookup) won't conflate two different rows that happen to share an ID.
@@ -1088,35 +1127,58 @@ public class ParamRowWindow
         // have to keep comparing by ID.
         var auxDiffVanilla = Context.AuxDiffCaches.Any(cache => cache.VanillaDiffIds.Contains(r.ID));
 
-        var popColor = true;
-
         if (diffVanilla)
         {
-            // If the auxes are changed 
+            // If the auxes are changed
             var auxDiffPrimaryAndVanilla = (auxDiffVanilla ? 1 : 0) + Context.AuxDiffCaches
                 .Count(cache => cache.VanillaDiffIds.Contains(r.ID) && cache.PrimaryDiffIds.Contains(r.ID)) > 1;
+
+            // Added: no vanilla row has this ID (the diff cache can't tell, it holds both)
+            var added = Context.VanillaRowIds != null && !Context.VanillaRowIds.Contains(r.ID);
 
             if (auxDiffVanilla && auxDiffPrimaryAndVanilla)
             {
                 ImGui.PushStyleColor(ImGuiCol.Text, UI.Current.ImGui_AuxConflict_Text);
             }
+            else if (filterMatch)
+            {
+                ImGui.PushStyleColor(ImGuiCol.Text, UI.Current.ImGui_ModifiedFilter_Text);
+            }
             else
             {
-                ImGui.PushStyleColor(ImGuiCol.Text, filterMatch ? UI.Current.ImGui_ModifiedFilter_Text : UI.Current.ImGui_PrimaryChanged_Text);
+                ImGui.PushStyleColor(ImGuiCol.Text, added ? UI.Current.ImGui_Vanilla_Added_Text : UI.Current.ImGui_Vanilla_Modified_Text);
+            }
+            pushed++;
+
+            if (CFG.Current.ParamEditor_Row_List_Display_Modified_Row_Bg)
+            {
+                var bgColor = filterMatch
+                    ? UI.Current.ParamRowModifiedFilterBackgroundColor
+                    : UI.Current.ParamRowDiffBackgroundColor;
+
+                if (selected)
+                {
+                    ImGui.PushStyleColor(ImGuiCol.Header, bgColor);
+                    pushed++;
+                }
+                else
+                {
+                    GUI.ApplyDiffHeaderBackground(bgColor);
+                }
             }
         }
-        else
+        else if (auxDiffVanilla)
         {
-            if (auxDiffVanilla)
-            {
-                ImGui.PushStyleColor(ImGuiCol.Text, UI.Current.ImGui_AuxAdded_Text);
-            }
-            else
-            {
-                popColor = false;
-            }
+            ImGui.PushStyleColor(ImGuiCol.Text, UI.Current.ImGui_AuxAdded_Text);
+            pushed++;
         }
 
+        return pushed;
+    }
+
+    private void DisplayRow(bool[] selectionCache, int selectionCacheIndex,
+        List<Param.Row> p, Param.Row r, bool isPinned)
+    {
         var selected = selectionCache != null && selectionCacheIndex < selectionCache.Length
             ? selectionCache[selectionCacheIndex]
             : false;
@@ -1153,45 +1215,17 @@ public class ParamRowWindow
         label = Utils.ImGui_WordWrapString(label, ImGui.GetColumnWidth(),
             !CFG.Current.ParamEditor_Row_List_Enable_Line_Wrapping ? 1 : 3);
 
-        if (CFG.Current.ParamEditor_Row_List_Display_Modified_Row_Bg)
-        {
-            if (diffVanilla)
-            {
-                if (selected)
-                {
-                    ImGui.PushStyleColor(ImGuiCol.Header, filterMatch
-                        ? UI.Current.ParamRowModifiedFilterBackgroundColor
-                        : UI.Current.ParamRowDiffBackgroundColor);
-                }
-                else
-                {
-                    GUI.ApplyDiffHeaderBackground(filterMatch
-                        ? UI.Current.ParamRowModifiedFilterBackgroundColor
-                        : UI.Current.ParamRowDiffBackgroundColor);
-                }
-            }
-        }
-
         if (Name_EditRow == null || Name_EditRow != r)
         {
+            var pushedColors = PushRowDiffColors(r, selected);
+
             var clicked = ImGui.Selectable($@"{label}##{selectionCacheIndex}_name", selected);
 
             HandleRowSelectableInput(clicked, p, r, false);
 
-            if (CFG.Current.ParamEditor_Row_List_Display_Modified_Row_Bg)
+            if (pushedColors > 0)
             {
-                if (diffVanilla)
-                {
-                    if (selected)
-                    {
-                        ImGui.PopStyleColor(1);
-                    }
-                }
-            }
-
-            if (popColor)
-            {
-                ImGui.PopStyleColor(1);
+                ImGui.PopStyleColor(pushedColors);
             }
 
             DisplayContextMenu("name", r, selectionCacheIndex, isPinned);
@@ -1214,17 +1248,6 @@ public class ParamRowWindow
         }
         else if (Name_EditRow == r)
         {
-            // The modified-row header colour pushed above is only popped in the selectable branch, so pop it here too
-            if (CFG.Current.ParamEditor_Row_List_Display_Modified_Row_Bg && diffVanilla && selected)
-            {
-                ImGui.PopStyleColor(1);
-            }
-
-            if (popColor)
-            {
-                ImGui.PopStyleColor(1);
-            }
-
             ImGui.SetNextItemWidth(-1);
 
             if (_focusEditInput)

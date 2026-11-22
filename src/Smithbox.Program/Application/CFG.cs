@@ -192,6 +192,9 @@ public class CFG
 
     // Editor Presentation
     public bool Interface_Display_Title_Headers = false;
+
+    // Every editor colours and marks items that differ from, or aren't in, the game's data (VanillaMarkers)
+    public bool Interface_Vanilla_Highlight = true;
     public bool Interface_Display_Searchbar_Minimize = true;
     public bool Interface_Searchbar_Fixed_Width = true;
 
@@ -799,6 +802,7 @@ public class CFG
     public bool Interface_TimeActEditor_ToolWindow = true;
 
     public bool TimeActEditor_Allow_Unmodified_Save = false;
+    public bool TimeActEditor_Save_Krak_As_Deflate = false;
     public bool TimeActEditor_Allow_Automatic_Save = true;
     public string TimeActEditor_Export_Directory = "";
     public bool AutomaticSave_TimeActEditor = true;

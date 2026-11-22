@@ -299,7 +299,8 @@ public class TextEntryList
         }
 
         return EditorFilters.IsMatch(
-            EntryListFilter, entry.ID.ToString(), ExactEntryListFilter, entry.Text);
+            EntryListFilter, entry.ID.ToString(), ExactEntryListFilter,
+            () => Parent.DifferenceManager.EntryStatus(entry), entry.Text);
     }
 
     public void DisplayEntryRow(FMG.Entry entry, int id, string contents, int index)
@@ -363,28 +364,18 @@ public class TextEntryList
         var displayedText = FormatDisplayName(contents);
         var isSelected = Parent.Selection.IsFmgEntrySelected(index);
 
-        // Unique rows
-        if (Parent.DifferenceManager.IsUniqueToProject(entry))
-        {
-            ImGui.PushStyleColor(ImGuiCol.Text, UI.Current.ImGui_TextEditor_UniqueTextEntry_Text);
-        }
-        // Modified rows
-        else if (Parent.DifferenceManager.IsDifferentToVanilla(entry))
-        {
-            ImGui.PushStyleColor(ImGuiCol.Text, UI.Current.ImGui_TextEditor_ModifiedTextEntry_Text);
-        }
+        // Unique (added) and modified rows take the shared vanilla colours
+        var coloured = VanillaMarkers.PushColour(Parent.DifferenceManager.EntryStatus(entry));
 
         // Script row
-        if (ImGui.Selectable($"{displayedText}##fmgEntryName_{id}{index}", isSelected))
+        var clicked = ImGui.Selectable($"{displayedText}##fmgEntryName_{id}{index}", isSelected);
+
+        VanillaMarkers.PopColour(coloured);
+
+        if (clicked)
         {
             Parent.Selection.SelectFmgEntry(index, entry);
             Parent.TextEntryCreator.UpdateParameters(entry);
-        }
-
-        if (Parent.DifferenceManager.IsUniqueToProject(entry) ||
-            Parent.DifferenceManager.IsDifferentToVanilla(entry))
-        {
-            ImGui.PopStyleColor(1);
         }
 
         // Modified rows: show what the text was in vanilla
@@ -464,11 +455,9 @@ public class TextEntryList
 
         var input = rawInput.Trim().ToLower();
 
-        if (input == "modified")
-        {
-            return true;
-        }
-        else if (input == "unique")
+        // "modified" and "added" are the shared vanilla-state search terms (EditorFilters), which combine with
+        // other terms; "unique" (= added) and "deleted" stay commands of their own
+        if (input == "unique")
         {
             return true;
         }

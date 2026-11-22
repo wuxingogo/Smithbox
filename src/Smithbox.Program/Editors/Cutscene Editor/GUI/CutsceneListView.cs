@@ -157,15 +157,35 @@ public class CutsceneListView
             foreach (var file in files)
             {
                 var alias = AliasOf(file.Name);
-                if (Filter.Length > 0
+
+                // A search with "modified" / "added" goes through the shared filter (its + and | too); others keep the
+                // plain name / alias match
+                if (EditorFilters.HasStatusTerm(Filter))
+                {
+                    var match = EditorFilters.IsMatch(Filter, file.Name, false,
+                        () => file.IsNew ? VanillaStatus.Added : Editor.Project.VFS.FileStatus(file.Entry.Path), alias ?? "");
+                    if (!match)
+                        continue;
+                }
+                else if (Filter.Length > 0
                     && !file.Name.Contains(Filter, StringComparison.OrdinalIgnoreCase)
                     && !(alias?.Contains(Filter, StringComparison.OrdinalIgnoreCase) ?? false))
                     continue;
 
                 var isSelected = file == selected;
 
+                // Against the game's file: a new (unsaved) cutscene is Added, else the saved file's status
+                var vanillaStatus = file.IsNew ? VanillaStatus.Added : Editor.Project.VFS.FileStatus(file.Entry.Path);
+                var coloured = VanillaMarkers.PushColour(vanillaStatus);
+
                 // The ## suffix keeps the ID the same as the changed marker comes and goes
-                if (ImGui.Selectable($"{file.Name}{(file.IsDirty || file.PendingRevert ? "*" : "")}##cutscene_{file.Name}", isSelected))
+                var clicked = ImGui.Selectable($"{file.Name}{(file.IsDirty || file.PendingRevert ? "*" : "")}##cutscene_{file.Name}", isSelected);
+
+                VanillaMarkers.PopColour(coloured);
+                if (coloured)
+                    GUI.Tooltip(file.IsNew ? LOC.Get("CUTSCENE_File_New_TT") : VanillaMarkers.TooltipText(vanillaStatus) ?? "");
+
+                if (clicked)
                 {
                     Editor.Select(file, 0);
                     Section = ListSection.Files;
@@ -201,6 +221,7 @@ public class CutsceneListView
         DrawNamePopup();
     }
 
+    /// <summary>A pending revert gets an icon; new / modified / added files are shown by the label's colour</summary>
     private void Markers(CutsceneFile file)
     {
         if (file.PendingRevert)
@@ -208,12 +229,6 @@ public class CutsceneListView
             ImGui.SameLine();
             ImGui.TextColored(UI.Current.ImGui_Warning_Text_Color, Icons.Undo);
             GUI.Tooltip(LOC.Get("CUTSCENE_File_Reverting_TT"));
-        }
-        else if (file.IsNew)
-        {
-            ImGui.SameLine();
-            ImGui.TextColored(UI.Current.ImGui_Benefit_Text_Color, Icons.PlusCircle);
-            GUI.Tooltip(LOC.Get("CUTSCENE_File_New_TT"));
         }
     }
 

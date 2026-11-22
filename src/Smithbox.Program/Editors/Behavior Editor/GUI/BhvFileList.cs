@@ -49,8 +49,8 @@ public class BhvFileList
     private void DrawBinder(BhvBinderWrapper binder)
     {
         // A filter matches the behbnd name or any of its file names
-        var binderMatches = EditorFilters.IsMatch(Filter, binder.Name, ExactFilter);
-        var files = binderMatches ? binder.Files : binder.Files.Where(f => EditorFilters.IsMatch(Filter, f.Name, ExactFilter)).ToList();
+        var binderMatches = EditorFilters.IsMatch(Filter, binder.Name, ExactFilter, () => binder.VanillaStatus);
+        var files = binderMatches ? binder.Files : binder.Files.Where(f => EditorFilters.IsMatch(Filter, f.Name, ExactFilter, () => binder.FileStatus(f))).ToList();
 
         if (!binderMatches && files.Count == 0)
             return;
@@ -63,10 +63,19 @@ public class BhvFileList
         else if (Filter.Length > 0 && !binderMatches)
             ImGui.SetNextItemOpen(true, ImGuiCond.Always);
 
+        // The saved binder against the game's
+        var binderStatus = binder.VanillaStatus;
+        var binderColoured = VanillaMarkers.PushColour(binderStatus);
+
         var open = ImGui.TreeNodeEx($"{label}##bhvBinder_{binder.Name}",
             isSelectedBinder ? ImGuiTreeNodeFlags.Selected | ImGuiTreeNodeFlags.SpanAvailWidth : ImGuiTreeNodeFlags.SpanAvailWidth);
 
-        GUI.Tooltip(LOC.Get("BHV_FileList_Binder_TT", binder.FilePath, binder.Files.Count, binder.OtherEntryCount));
+        VanillaMarkers.PopColour(binderColoured);
+
+        var binderTip = LOC.Get("BHV_FileList_Binder_TT", binder.FilePath, binder.Files.Count, binder.OtherEntryCount);
+        GUI.Tooltip(binderColoured && VanillaMarkers.TooltipText(binderStatus) is { } binderNote
+            ? $"{binderTip}\n{binderNote}"
+            : binderTip);
 
         if (!open)
             return;
@@ -77,7 +86,17 @@ public class BhvFileList
             var name = file.IsDirty ? $"{file.Name}*" : file.Name;
             var selected = View.Selection.SelectedFile == file;
 
-            if (ImGui.Selectable($"{name}##bhvFile_{binder.Name}_{file.Key}", selected))
+            // The saved .bhv against the game's entry of the same name
+            var fileStatus = binder.FileStatus(file);
+            var fileColoured = VanillaMarkers.PushColour(fileStatus);
+
+            var clicked = ImGui.Selectable($"{name}##bhvFile_{binder.Name}_{file.Key}", selected);
+
+            VanillaMarkers.PopColour(fileColoured);
+            if (fileColoured)
+                VanillaMarkers.Tooltip(fileStatus);
+
+            if (clicked)
             {
                 View.Selection.SelectFile(file);
             }

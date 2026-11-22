@@ -166,12 +166,24 @@ public class SoundEntryList
             GUI.Tooltip(LOC.Get(edit.IsVanilla ? "SOUND_Edit_Mark_Vanilla_TT" : "SOUND_Edit_Mark_TT", edit.Label));
             ImGui.SameLine();
         }
+        // The name takes the vanilla colour (modified / added against the game's sound)
+        var status = View.CanEdit ? e.Container.EntryStatus(e) : VanillaStatus.None;
+        var coloured = false;
+
         if (e.IsEmpty || e.IsNotAudio)
+        {
             ImGui.TextDisabled($"{e.DisplayName} {LOC.Get(e.IsNotAudio ? "SOUND_Label_Not_Audio" : "SOUND_Label_Empty")}");
+        }
         else
+        {
+            coloured = VanillaMarkers.PushColour(status);
             ImGui.Text(e.DisplayName);
-        if (e.SourceFile != null)
-            GUI.Tooltip(e.SourceFile);
+            VanillaMarkers.PopColour(coloured);
+        }
+
+        var statusText = coloured ? VanillaMarkers.TooltipText(status) : null;
+        if (e.SourceFile != null || statusText != null)
+            GUI.Tooltip(string.Join("\n", new[] { e.SourceFile, statusText }.Where(s => s != null)));
 
         // Alias (the project's Sounds alias for the sound ID in the name)
         ImGui.TableNextColumn();
@@ -300,7 +312,9 @@ public class SoundEntryList
     {
         // alias edits change what a filter matches
         var namesVersion = View.Data?.Names?.Version ?? 0;
-        if (VisibleSource == entries && VisibleFilter == Filter && VisibleExact == ExactFilter && VisibleNamesVersion == namesVersion)
+        // A vanilla-state search is rebuilt every frame: statuses arrive from background compares
+        if (VisibleSource == entries && VisibleFilter == Filter && VisibleExact == ExactFilter && VisibleNamesVersion == namesVersion
+            && !EditorFilters.HasStatusTerm(Filter))
             return;
 
         VisibleSource = entries;
@@ -311,7 +325,7 @@ public class SoundEntryList
         // name, alias, sound ID and media ID all match
         Visible = string.IsNullOrWhiteSpace(Filter)
             ? entries
-            : entries.Where(e => EditorFilters.IsMatch(Filter, e.DisplayName, ExactFilter, e.Alias ?? "") ||
+            : entries.Where(e => EditorFilters.IsMatch(Filter, e.DisplayName, ExactFilter, () => View.CanEdit ? e.Container.EntryStatus(e) : VanillaStatus.None, e.Alias ?? "") ||
                                  (e.SoundId != null && EditorFilters.IsMatch(Filter, e.SoundId, ExactFilter)) ||
                                  (e.MediaId != 0 && EditorFilters.IsMatch(Filter, e.MediaId.ToString(), ExactFilter))).ToList();
     }

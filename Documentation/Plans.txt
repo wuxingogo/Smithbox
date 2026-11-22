@@ -80,12 +80,9 @@
 #----------------------------------------------------
 # Time Act Editor TODO
 #----------------------------------------------------
-- Add spinner modal for saving with KRAK, so user understands it is slow
-
 - DS2: TAE support (requires some additional stuff for the 'network' concept DS2 has)
 
 - Tools:
-    - Behavior / Hit Source Selector
     - Scan for unused animations
     - Animation Builder: builds new animation from combo of animations
     - FBX to HKX
@@ -136,16 +133,11 @@
 #----------------------------------------------------
 # EMEVD Editor TODO
 #----------------------------------------------------
-
-- Aliases for ID references within Script graph
-- UX for properties
 - Add auto-fill value ranges for templates (i.e. disable enemies with entity IDs between X and Y)
 
 #----------------------------------------------------
 # ESD Editor TODO
 #----------------------------------------------------
-
-- UX for Properties
 - Aliases for ID references within States graph
 
 #----------------------------------------------------
@@ -168,13 +160,6 @@
 #----------------------------------------------------
 # Rendering
 #----------------------------------------------------
-- DS3: texture UVs messed up on quite a few meshes
-
-- DS3: some chrs missing textures: c1280
-- DS3: non-map external resource usage: m903400
-- SDT: regression for some objects/mappieces, pink multi-color, flame shader related?: m504040, m002679
-- SDT: water shader doesn't exist: m800003
-- SDT: non-map external resource usage: m902000
 - ER: Waterfall textures look a bit simple
 - AC6 chrs missing textures
 - NR: various assets missing textures (AEG576_127, AEG576_111)

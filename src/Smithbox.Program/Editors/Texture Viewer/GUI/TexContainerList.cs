@@ -138,7 +138,8 @@ public class TexContainerList
                     var aliasName = GetAlias(rawName);
 
                     var isMatch = EditorFilters.IsMatch(
-                        FileListFilter, entry.Key.Path, ExactFileListFilter, aliasName, true, true);
+                        FileListFilter, entry.Key.Path, ExactFileListFilter,
+                        () => Project.Handler.TextureData.PrimaryBank.Vanilla.ContainerStatus(entry.Key), aliasName, true, true);
 
                     if (isMatch)
                     {
@@ -184,33 +185,35 @@ public class TexContainerList
                         }
                     }
 
-                    // Unsaved changes, then project files, are coloured; game data files keep the default colour
+                    // Unsaved changes are yellow; otherwise a project copy takes the shared vanilla colour (modified
+                    // or added). Game data files and byte-identical copies keep the default colour.
                     var isModified = entry.Value != null && entry.Value.IsModified;
-                    var isProject = Project.Handler.TextureData.PrimaryBank.IsProjectFile(entry.Key);
+                    var status = !isModified && Project.Handler.TextureData.PrimaryBank.IsProjectFile(entry.Key)
+                        ? Project.VFS.FileStatus(entry.Key.Path)
+                        : VanillaStatus.None;
 
+                    var pushed = false;
                     if (isModified)
                     {
                         displayName = $"{displayName} *";
                         ImGui.PushStyleColor(ImGuiCol.Text, UI.Current.ImGui_TextureEditor_ModifiedFile_Text);
+                        pushed = true;
                     }
-                    else if (isProject)
+                    else
                     {
-                        ImGui.PushStyleColor(ImGuiCol.Text, UI.Current.ImGui_TextureEditor_ProjectFile_Text);
+                        pushed = VanillaMarkers.PushColour(status);
                     }
 
                     // File row
                     // ### so the id doesn't change when the marker is added
                     var clicked = ImGui.Selectable($@"{displayName}###{entry.Key.Path}{i}", isSelected);
 
-                    if (isModified || isProject)
-                    {
-                        ImGui.PopStyleColor();
-                    }
+                    VanillaMarkers.PopColour(pushed);
 
-                    if (isModified || isProject)
-                    {
-                        GUI.Tooltip(LOC.Get(isModified ? "TEXVIEW_FileList_Modified_TT" : "TEXVIEW_FileList_Project_File_TT"));
-                    }
+                    if (isModified)
+                        GUI.Tooltip(LOC.Get("TEXVIEW_FileList_Modified_TT"));
+                    else if (pushed)
+                        VanillaMarkers.Tooltip(status);
 
                     if (clicked)
                     {
@@ -348,7 +351,7 @@ public class TexContainerList
             return;
 
         var entries = movies.Entries
-            .Where(e => EditorFilters.IsMatch(FileListFilter, e.Key.Path, ExactFileListFilter, "", true, true))
+            .Where(e => EditorFilters.IsMatch(FileListFilter, e.Key.Path, ExactFileListFilter, () => Project.VFS.FileStatus(e.Key.Path), "", true, true))
             .OrderBy(e => e.Key.Path, System.StringComparer.OrdinalIgnoreCase)
             .ToList();
 
@@ -362,21 +365,30 @@ public class TexContainerList
                 var (entry, contents) = entries[i];
                 var isSelected = View.Movie.Entry != null && View.Movie.Entry.Path == entry.Path;
                 var isModified = contents != null && contents.IsModified;
-                var isProject = movies.IsProjectFile(entry);
+                var status = !isModified && movies.IsProjectFile(entry)
+                    ? Project.VFS.FileStatus(entry.Path)
+                    : VanillaStatus.None;
                 var displayName = isModified ? $"{entry.Path} *" : entry.Path;
 
+                var pushed = false;
                 if (isModified)
+                {
                     ImGui.PushStyleColor(ImGuiCol.Text, UI.Current.ImGui_TextureEditor_ModifiedFile_Text);
-                else if (isProject)
-                    ImGui.PushStyleColor(ImGuiCol.Text, UI.Current.ImGui_TextureEditor_ProjectFile_Text);
+                    pushed = true;
+                }
+                else
+                {
+                    pushed = VanillaMarkers.PushColour(status);
+                }
 
                 var clicked = ImGui.Selectable($"{displayName}###movie_{entry.Path}", isSelected);
 
-                if (isModified || isProject)
-                {
-                    ImGui.PopStyleColor();
-                    GUI.Tooltip(LOC.Get(isModified ? "TEXVIEW_FileList_Modified_TT" : "TEXVIEW_FileList_Project_File_TT"));
-                }
+                VanillaMarkers.PopColour(pushed);
+
+                if (isModified)
+                    GUI.Tooltip(LOC.Get("TEXVIEW_FileList_Modified_TT"));
+                else if (pushed)
+                    VanillaMarkers.Tooltip(status);
 
                 if (clicked)
                 {

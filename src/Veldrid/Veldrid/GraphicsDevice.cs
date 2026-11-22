@@ -40,6 +40,9 @@ namespace Veldrid
         private VkPhysicalDeviceVulkan11Features _physicalDeviceFeatures11;
         private VkPhysicalDeviceVulkan12Features _physicalDeviceFeatures12;
         private VkPhysicalDeviceVulkan13Features _physicalDeviceFeatures13;
+        // Vulkan 1.2 device (e.g. Mesa Dozen on WSL2): synchronization2 and dynamic rendering come from their KHR extensions,
+        // the KHR entry points are used and maintenance4 (unused here) is not required
+        internal static bool UseKhr13;
         private VkPhysicalDeviceMemoryProperties _physicalDeviceMemProperties;
         private VkDevice _device;
         
@@ -233,7 +236,7 @@ namespace Veldrid
                 physicalDevice = _physicalDevice,
                 device = _device,
                 instance = _instance,
-                vulkanApiVersion = VkVersion.Version_1_3
+                vulkanApiVersion = UseKhr13 ? VkVersion.Version_1_2 : VkVersion.Version_1_3
             };
             var result = Vma.vmaCreateAllocator(&allocatorInfo, out _vmaAllocator);
             CheckResult(result);
@@ -1506,12 +1509,12 @@ namespace Veldrid
             
             lock (_submitLock)
             {
-                VkResult result = vkQueueSubmit2(queue, 1, &si, vkFence);
+                VkResult result = UseKhr13 ? vkQueueSubmit2KHR(queue, 1, &si, vkFence) : vkQueueSubmit2(queue, 1, &si, vkFence);
                 CheckDeviceLost(result);
                 CheckResult(result);
                 if (useExtraFence)
                 {
-                    result = vkQueueSubmit2(queue, 0, null, submissionFence);
+                    result = UseKhr13 ? vkQueueSubmit2KHR(queue, 0, null, submissionFence) : vkQueueSubmit2(queue, 0, null, submissionFence);
                     CheckResult(result);
                 }
                 _commandListPool.Recycle(cl);
@@ -1826,27 +1829,30 @@ namespace Veldrid
         public static int ValidationErrorCount => Volatile.Read(ref _validationErrorCount);
 
         /// <summary>
-        /// Whether a GPU can show images in the window: it has VK_KHR_swapchain, and a graphics and compute queue
-        /// family that can present to the surface, which is the queue CreateLogicalDevice needs.
+        /// Whether a GPU offers the given device extension.
         /// </summary>
-        private static bool CanPresent(VkPhysicalDevice device, VkSurfaceKHR surface, out string reason)
+        private static bool HasDeviceExtension(VkPhysicalDevice device, string name)
         {
             uint extensionCount = 0;
             vkEnumerateDeviceExtensionProperties(device, null, &extensionCount, null);
             VkExtensionProperties* extensions = stackalloc VkExtensionProperties[(int)extensionCount];
             vkEnumerateDeviceExtensionProperties(device, null, &extensionCount, extensions);
 
-            bool hasSwapchain = false;
             for (int i = 0; i < extensionCount; i++)
             {
-                if (Util.GetString((byte*)extensions[i].extensionName) == "VK_KHR_swapchain")
-                {
-                    hasSwapchain = true;
-                    break;
-                }
+                if (Util.GetString((byte*)extensions[i].extensionName) == name)
+                    return true;
             }
+            return false;
+        }
 
-            if (!hasSwapchain)
+        /// <summary>
+        /// Whether a GPU can show images in the window: it has VK_KHR_swapchain, and a graphics and compute queue
+        /// family that can present to the surface, which is the queue CreateLogicalDevice needs.
+        /// </summary>
+        private static bool CanPresent(VkPhysicalDevice device, VkSurfaceKHR surface, out string reason)
+        {
+            if (!HasDeviceExtension(device, "VK_KHR_swapchain"))
             {
                 reason = "no VK_KHR_swapchain";
                 return false;
@@ -1933,6 +1939,37 @@ namespace Veldrid
                 };
 
                 vkGetPhysicalDeviceFeatures2(device, &deviceFeatures);
+                bool khr13 = (uint)physicalDeviceProperties.apiVersion < (uint)VkVersion.Version_1_3;
+                if (khr13)
+                {
+                    // Only chain the feature structs of extensions the device offers
+                    var sync2 = new VkPhysicalDeviceSynchronization2Features();
+                    var dynRendering = new VkPhysicalDeviceDynamicRenderingFeatures();
+                    var imageRobustness = new VkPhysicalDeviceImageRobustnessFeatures();
+                    var features2 = new VkPhysicalDeviceFeatures2();
+                    void** chainEnd = &features2.pNext;
+                    if (HasDeviceExtension(device, "VK_KHR_synchronization2"))
+                    {
+                        *chainEnd = &sync2;
+                        chainEnd = &sync2.pNext;
+                    }
+                    if (HasDeviceExtension(device, "VK_KHR_dynamic_rendering"))
+                    {
+                        *chainEnd = &dynRendering;
+                        chainEnd = &dynRendering.pNext;
+                    }
+                    if (HasDeviceExtension(device, "VK_EXT_image_robustness"))
+                    {
+                        *chainEnd = &imageRobustness;
+                        chainEnd = &imageRobustness.pNext;
+                    }
+                    vkGetPhysicalDeviceFeatures2(device, &features2);
+                    deviceVulkan13Features.synchronization2 = sync2.synchronization2;
+                    deviceVulkan13Features.dynamicRendering = dynRendering.dynamicRendering;
+                    deviceVulkan13Features.maintenance4 = VkBool32.True;
+                    // From VK_EXT_image_robustness when offered, enabled in CreateLogicalDevice
+                    deviceVulkan13Features.robustImageAccess = imageRobustness.robustImageAccess;
+                }
                 vkGetPhysicalDeviceMemoryProperties(device, out var physicalDeviceMemProperties);
                 
                 // Check for required features
@@ -1982,6 +2019,7 @@ namespace Veldrid
 
                 // We found a physical device with the required features
                 _physicalDevice = device;
+                UseKhr13 = khr13;
                 _physicalDeviceProperties = physicalDeviceProperties;
                 _physicalDeviceMemProperties = physicalDeviceMemProperties;
                 _physicalDeviceFeatures = deviceFeatures.features;
@@ -2143,7 +2181,27 @@ namespace Veldrid
                 robustImageAccess = _physicalDeviceFeatures13.robustImageAccess
             };
             deviceFeatures11.pNext = &deviceFeatures12;
-            deviceFeatures12.pNext = &deviceFeatures13;
+            var sync2Features = new VkPhysicalDeviceSynchronization2Features { synchronization2 = VkBool32.True };
+            var dynRenderingFeatures = new VkPhysicalDeviceDynamicRenderingFeatures { dynamicRendering = VkBool32.True, pNext = &sync2Features };
+            var imageRobustnessFeatures = new VkPhysicalDeviceImageRobustnessFeatures { robustImageAccess = VkBool32.True };
+            // The pNext of the last struct in the chain, where optional feature structs are added
+            void** featureChainEnd;
+            if (UseKhr13)
+            {
+                deviceFeatures12.pNext = &dynRenderingFeatures;
+                featureChainEnd = &sync2Features.pNext;
+                // On a Vulkan 1.2 device robustImageAccess comes from VK_EXT_image_robustness
+                if (_physicalDeviceFeatures13.robustImageAccess)
+                {
+                    *featureChainEnd = &imageRobustnessFeatures;
+                    featureChainEnd = &imageRobustnessFeatures.pNext;
+                }
+            }
+            else
+            {
+                deviceFeatures12.pNext = &deviceFeatures13;
+                featureChainEnd = &deviceFeatures13.pNext;
+            }
 
             uint propertyCount = 0;
             VkResult result = vkEnumerateDeviceExtensionProperties(_physicalDevice, null, &propertyCount, null);
@@ -2167,6 +2225,11 @@ namespace Veldrid
                 {
                     extensionNames.Add((IntPtr)properties[property].extensionName);
                     requiredInstanceExtensions.Remove(extensionName);
+                }
+                else if (UseKhr13 && (extensionName == "VK_KHR_synchronization2" || extensionName == "VK_KHR_dynamic_rendering" ||
+                    (extensionName == "VK_EXT_image_robustness" && _physicalDeviceFeatures13.robustImageAccess)))
+                {
+                    extensionNames.Add((IntPtr)properties[property].extensionName);
                 }
                 else if (preferStandardClipY && extensionName == "VK_KHR_maintenance1")
                 {
@@ -2234,7 +2297,8 @@ namespace Veldrid
 
                 if (hasDeviceFault)
                 {
-                    deviceFeatures13.pNext = &deviceFaultFeatures;
+                    *featureChainEnd = &deviceFaultFeatures;
+                    featureChainEnd = &deviceFaultFeatures.pNext;
                 }
             }
 

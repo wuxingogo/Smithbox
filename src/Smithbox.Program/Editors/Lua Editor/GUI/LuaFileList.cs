@@ -75,19 +75,18 @@ public class LuaFileList
             ImGui.SetNextItemOpen(true);
 
         var label = container.IsDirty ? $"{container.Name}*" : container.Name;
-        if (container.InProject)
-            ImGui.PushStyleColor(ImGuiCol.Text, UI.Current.ImGui_PrimaryChanged_Text);
+        var status = container.VanillaStatus;
+        var coloured = VanillaMarkers.PushColour(status);
         var open = ImGui.TreeNodeEx($"{label}##luaBinder_{container.Path}", flags);
-        if (container.InProject)
-            ImGui.PopStyleColor();
+        VanillaMarkers.PopColour(coloured);
 
         if (selected && ScrollToSelection)
             ImGui.SetScrollHereY();
 
         if (ImGui.IsItemClicked() && !ImGui.IsItemToggledOpen())
             Editor.SelectContainer(container);
-        if (container.InProject)
-            GUI.Tooltip(LOC.Get("LUA_FileList_In_Project_TT"));
+        if (coloured)
+            VanillaMarkers.Tooltip(status);
 
         // A binder of one script: that script's actions; a map's binder (or aicommon): a new script in it
         if (ImGui.BeginPopupContextItem($"##luaBinderMenu_{container.Path}"))
@@ -131,7 +130,14 @@ public class LuaFileList
                     continue;
 
                 var name = script.IsDirty ? $"{script.EntryName}*" : script.EntryName;
-                if (ImGui.Selectable($"{name}##luaScript_{container.Path}_{script.EntryName}", Editor.SelectedScript == script))
+                var scriptStatus = container.ScriptStatus(script);
+                var scriptColoured = VanillaMarkers.PushColour(scriptStatus);
+                var clicked = ImGui.Selectable($"{name}##luaScript_{container.Path}_{script.EntryName}", Editor.SelectedScript == script);
+                VanillaMarkers.PopColour(scriptColoured);
+                if (scriptColoured)
+                    VanillaMarkers.Tooltip(scriptStatus);
+
+                if (clicked)
                     Editor.SelectScript(script);
                 if (ImGui.BeginPopupContextItem($"##luaScriptMenu_{container.Path}_{script.EntryName}"))
                 {
@@ -219,19 +225,21 @@ public class LuaFileList
     }
 
     private bool MatchesBinder(LuaContainer container) =>
-        IsMatch(container.Name, container.HoldsManyGoals ? null : container.GoalId, container.HoldsManyGoals ? null : container.CharacterId);
+        IsMatch(container.Name, container.HoldsManyGoals ? null : container.GoalId, container.HoldsManyGoals ? null : container.CharacterId,
+            () => container.VanillaStatus);
 
     private bool MatchesScript(LuaScript script) =>
-        string.IsNullOrEmpty(Filter) || IsMatch(script.EntryName, script.GoalId, script.CharacterId);
+        string.IsNullOrEmpty(Filter) || IsMatch(script.EntryName, script.GoalId, script.CharacterId,
+            () => script.Container.ScriptStatus(script));
 
-    private bool IsMatch(string name, int? goalId, string chr)
+    private bool IsMatch(string name, int? goalId, string chr, Func<VanillaStatus> status)
     {
         var users = CFG.Current.LuaEditor_File_List_Display_Users && goalId is { } id
             ? string.Join(" ", Editor.Project.Handler.LuaData?.UsersOf(id).Select(u => u.Name) ?? Array.Empty<string>())
             : "";
-        // The character's ID and alias match too
+        // The character's ID and alias match too; "modified" / "added" match the vanilla state
         var character = chr != null ? $"{chr} {AliasOf(chr)}" : "";
-        return EditorFilters.IsMatch(Filter, name, ExactFilter, $"{character} {users}");
+        return EditorFilters.IsMatch(Filter, name, ExactFilter, status, $"{character} {users}");
     }
 
     private static string KindName(LuaBinderKind kind) => kind switch

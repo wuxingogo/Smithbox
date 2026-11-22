@@ -66,7 +66,7 @@
     },
     {
       "Key": "EDITOR_List_Filter_Input_TT",
-      "Text": "Enter the search term to filter this list by.\n\nSeparate terms that behave as an AND are split with the {0} character.\n\nSeparate terms that behave as an OR are split with the {1} character."
+      "Text": "Enter the search term to filter this list by.\n\nSeparate terms that behave as an AND are split with the {0} character.\n\nSeparate terms that behave as an OR are split with the {1} character.\n\nIn lists that colour items by their vanilla state, the terms modified and added show only modified or added items, and combine with other terms (e.g. modified{0}c1000)."
     },
     {
       "Key": "EDITOR_Search_Size_Toggle_TT",
@@ -459,6 +459,18 @@
     {
       "Key": "EDITOR_Window_CenterPanel",
       "Text": "Center Panel"
+    },
+    {
+      "Key": "EDITOR_Vanilla_Modified_TT",
+      "Text": "Modified: differs from the game's data."
+    },
+    {
+      "Key": "EDITOR_Vanilla_Added_TT",
+      "Text": "Added: the game's data doesn't have this."
+    },
+    {
+      "Key": "EDITOR_Vanilla_NoVanilla_TT",
+      "Text": "The game's data has no copy of this to compare with."
     }
   ]
 }

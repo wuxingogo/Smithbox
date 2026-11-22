@@ -323,7 +323,9 @@ public class TextFileList
         var dlcGroupingName = TextUtils.GetFmgDlcGrouping(Project, View.Selection.SelectedContainerWrapper, id, fmgName);
 
         var isMatch = EditorFilters.IsMatch(
-            FmgListFilter, fmgName, ExactFmgListFilter, displayName, false, false, id.ToString());
+            FmgListFilter, fmgName, ExactFmgListFilter,
+            () => View.DifferenceManager.FmgStatus(View.Selection.SelectedContainerWrapper, info),
+            displayName, false, false, id.ToString());
 
         if (isMatch)
         {
@@ -353,8 +355,18 @@ public class TextFileList
                 labelName = $"{labelName}*";
             }
 
+            // Modified / added against the game's FMG of the same ID
+            var status = View.DifferenceManager.FmgStatus(View.Selection.SelectedContainerWrapper, info);
+            var coloured = VanillaMarkers.PushColour(status);
+
             // Script row
-            if (ImGui.Selectable($"{labelName}##{id}{selectableName}", View.Selection.SelectedFmgWrapper == info))
+            var clicked = ImGui.Selectable($"{labelName}##{id}{selectableName}", View.Selection.SelectedFmgWrapper == info);
+
+            VanillaMarkers.PopColour(coloured);
+            if (coloured)
+                VanillaMarkers.Tooltip(status);
+
+            if (clicked)
             {
                 View.Selection.SelectFmg(info);
             }
