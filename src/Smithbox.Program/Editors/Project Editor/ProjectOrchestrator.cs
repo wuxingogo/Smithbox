@@ -1,4 +1,4 @@
-﻿using Hexa.NET.ImGui;
+using Hexa.NET.ImGui;
 using Microsoft.Extensions.Logging;
 using Octokit;
 using SoulsFormats;
@@ -456,7 +456,31 @@ public class ProjectOrchestrator : IDisposable
     /// </summary>
     public Task ReloadProject(ProjectEntry curProject)
     {
-        return LoadProject(curProject, false, null, LoadFocus.ProjectEditor);
+        var camera = curProject.Handler?.MapEditor?.ViewHandler?.ActiveView?.ViewportHandler?.ActiveViewport?.Viewport?.ViewportCamera;
+        if (camera == null)
+            return LoadProject(curProject, false, null, LoadFocus.ProjectEditor);
+
+        var pose = camera.CameraTransform;
+        var origin = camera.CameraOrigin;
+        var mode = camera.ViewMode;
+        var size = camera.OrthographicSize;
+        var focusDistance = camera.FocusDistance;
+        var presetOrtho = camera.EnteredOrthographicForView;
+
+        return LoadProject(curProject, false, () =>
+        {
+            var restored = curProject.Handler?.MapEditor?.ViewHandler?.ActiveView?.ViewportHandler?.ActiveViewport?.Viewport?.ViewportCamera;
+            if (restored == null)
+                return;
+
+            restored.CameraTransform = pose;
+            restored.CameraOrigin = origin;
+            restored.ViewMode = mode;
+            restored.OrthographicSize = size;
+            restored.FocusDistance = focusDistance;
+            restored.EnteredOrthographicForView = presetOrtho;
+            restored.UpdateProjectionMatrix();
+        }, LoadFocus.ProjectEditor);
     }
 
     /// <summary>
