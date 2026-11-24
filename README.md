@@ -7,6 +7,10 @@ Smithbox is a modding tool for Elden Ring, Elden Ring: Nightreign, Armored Core 
 
 ## 本分支修改
 
+- **地图模型跳转**：`Go to Model` 按游戏的资源命名规则定位地图模型，支持 DS1／DS1R 的区域后缀。找不到模型容器或条目时，日志会显示查找失败的名称。
+- **地图属性面板**：从其他编辑器切回 Map Editor 时，右侧默认显示 Properties，仍可手动切到 Tools。
+- **材质贴图跳转**：在 Model Editor 的材质属性里双击贴图缩略图，可直接在 Texture Viewer 中打开对应贴图。跳转支持包含多个 TPF 的容器和地图使用的 `.tpfbhd` 打包贴图。
+- **视口中键平移**：Map Editor 和 Model Editor 的透视视口支持按住鼠标中键拖动平移，沿用现有的平移灵敏度。
 - **工程重载**：重新打开各地图编辑视图中已加载的地图，使用磁盘上的最新内容。已关闭或已从工程移除的地图会跳过。
 - **部署到 G 盘**：关闭 Smithbox，双击仓库根目录的 `DeployToG.bat`，即可将发布目录中的 `Smithbox.Program.dll` 和本 README 复制到 `G:\DarksoulsMod\Tools\Smithbox-2.2.6-FenceFix`。
 

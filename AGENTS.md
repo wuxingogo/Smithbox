@@ -31,4 +31,6 @@ When creating logs for diagnostics or other reasons, place them in the Smithbox/
 Do not try to verify changes by launching the program. Pass to the user and tell them what to check for. If additional information is needed during this step, include temporary changes to print additional diagnostics to a log that the user can pass back.
 
 # Process
+每次修改本分支时，同步更新根目录 `README.md` 的「本分支修改」章节。沿用现有的中文项目符号格式，概括本次改动及其影响。同一功能的后续修正可合并到已有条目。
+
 If a decision is needed, ask one decision at a time, with 2 to 4 concrete options, one marked recommended, a short rationale each. Use the structured-choice tool if one is available; otherwise ask in one short message.
