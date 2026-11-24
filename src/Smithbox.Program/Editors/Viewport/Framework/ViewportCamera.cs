@@ -131,7 +131,7 @@ public class ViewportCamera
     public float ObliqueAngle = CFG.Current.Viewport_DefaultObliqueAngle;
     public float ObliqueScaling = CFG.Current.Viewport_DefaultObliqueScaling;
 
-    // Pan sensitivity for orthographic/oblique modes
+    // Pan sensitivity shared by the viewport projections
     public float PanSensitivity = CFG.Current.Viewport_MousePan_Sensitivity;
 
     public ViewportCamera(IViewport viewport, Rectangle bounds)
@@ -226,6 +226,8 @@ public class ViewportCamera
     {
         if (CurrentClickType == MouseClickType.None)
         {
+            MiddleMousePressed = false;
+
             // If nothing is pressed, just dont bother lerping
             //mousePos = new Vector2(mouse.X, mouse.Y);
             if (RightMousePressed)
@@ -358,7 +360,7 @@ public class ViewportCamera
 
         HandleRightMouseClick(window);
         HandleNonRightMouseClick(window);
-        HandleMousePanning(window);
+        HandleMousePanning();
 
         UpdateCameraRotation();
 
@@ -442,16 +444,10 @@ public class ViewportCamera
         SDL.SetRelativeMouseMode(SdlBool.False);
     }
 
-    public unsafe void HandleMousePanning(Sdl2Window window)
+    private void HandleMousePanning()
     {
         if (Viewport == null)
             return;
-
-        if (ViewMode != ViewMode.Orthographic &&
-            ViewMode != ViewMode.Oblique)
-        {
-            return;
-        }
 
         if (CurrentMiddleMouseClick)
         {
@@ -474,9 +470,11 @@ public class ViewportCamera
 
                 PanMousePressPos = currentPos;
 
-                // One pixel is OrthographicSize / height world units, so at the default sensitivity of 25 the scene
-                // follows the cursor exactly
-                float panScale = OrthographicSize / Math.Max(Viewport.Height, 1) * (PanSensitivity / 25.0f);
+                // In perspective, match the cursor's movement at the camera's focus depth.
+                float viewHeight = ViewMode == ViewMode.Perspective
+                    ? 2.0f * Math.Max(FocusDistance, CFG.Current.Viewport_Perspective_Near_Clip) * HalfFovTangent
+                    : OrthographicSize;
+                float panScale = viewHeight / Math.Max(Viewport.Height, 1) * (PanSensitivity / 25.0f);
 
                 // Calculate pan movement in camera space
                 Vector3 rightDir = Vector3.Transform(Vector3.UnitX, CameraTransform.Rotation);

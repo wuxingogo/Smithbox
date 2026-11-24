@@ -173,6 +173,10 @@
       "Text": "No MTD or MATBIN was found for: {0}"
     },
     {
+      "Key": "MODEL_Properties_Material_Preview_Open_Texture_TT",
+      "Text": "Double-click to open in Texture Viewer."
+    },
+    {
       "Key": "MODEL_Properties_Material_Preview_Shader",
       "Text": "Shader: {0}"
     },

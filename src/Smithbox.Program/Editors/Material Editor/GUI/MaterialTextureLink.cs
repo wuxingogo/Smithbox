@@ -1,6 +1,7 @@
 using Hexa.NET.ImGui;
 using SoulsFormats;
 using StudioCore.Editors.Common;
+using StudioCore.Editors.TextureViewer;
 using StudioCore.Renderer;
 using StudioCore.Utilities;
 using System.Numerics;
@@ -197,12 +198,12 @@ public class MaterialTextureLink
 
         // Open in Texture Viewer: from where it was loaded, or else where the index has it
         var container = handle?.Source?.ContainerPath ?? containers.FirstOrDefault();
-        var entry = empty ? null : FindContainerEntry(Project, container);
+        var entry = empty ? null : TexCommandQueue.FindContainerEntry(Project, container);
         var canOpen = entry != null && Project.Handler.TextureViewer != null;
 
         if (ImGui.MenuItem($"{LOC.Get("MAT_Texture_Open_In_Viewer")}##openTexture_{id}", "", false, canOpen))
         {
-            EditorCommandQueue.AddCommand($"texture/view/{entry.Filename}/{name}");
+            EditorCommandQueue.AddCommand(new[] { "texture", "view", entry.Filename, name, entry.Path });
         }
 
         if (ImGui.MenuItem($"{LOC.Get("MAT_Texture_Copy_Name")}##copyTexture_{id}", "", false, !empty))
@@ -340,16 +341,4 @@ public class MaterialTextureLink
     /// <summary>
     /// The Texture Viewer's entry for a texture container (a .tpfbdt counts as its .tpfbhd)
     /// </summary>
-    private static FileDictionaryEntry FindContainerEntry(ProjectEntry project, string containerPath)
-    {
-        if (string.IsNullOrEmpty(containerPath))
-            return null;
-
-        var key = Normalize(containerPath.Replace(".tpfbdt", ".tpfbhd", StringComparison.OrdinalIgnoreCase));
-
-        return project.Locator.TextureFiles.Entries?.FirstOrDefault(e => Normalize(e.Path) == key)
-            ?? project.Locator.TexturePackedFiles.Entries?.FirstOrDefault(e => Normalize(e.Path) == key);
-    }
-
-    private static string Normalize(string path) => (path ?? "").Replace('\\', '/').TrimStart('/').ToLowerInvariant();
 }

@@ -415,7 +415,22 @@ public static class ModelPropertyDecorators
         {
             var scale = size / Math.Max(texture.Width, texture.Height);
             ImGui.Image(new ImTextureID(texture.TexHandle), new Vector2(texture.Width * scale, texture.Height * scale));
-            GUI.Tooltip($"{name}\n{texture.Width} x {texture.Height}");
+            if (ImGui.IsItemHovered())
+            {
+                var entry = view.Project.Handler.TextureViewer == null ? null
+                    : TexCommandQueue.FindContainerEntry(view.Project, handle?.Source?.ContainerPath)
+                        ?? materialEditor?.Textures.ContainersOf(name)
+                            .Select(containerPath => TexCommandQueue.FindContainerEntry(view.Project, containerPath))
+                            .FirstOrDefault(candidate => candidate != null);
+
+                if (entry != null && ImGui.IsMouseDoubleClicked(ImGuiMouseButton.Left))
+                {
+                    EditorCommandQueue.AddCommand(new[] { "texture", "view", entry.Filename, name, entry.Path });
+                }
+
+                var details = $"{name}\n{texture.Width} x {texture.Height}";
+                GUI.Tooltip(entry == null ? details : $"{details}\n{LOC.Get("MODEL_Properties_Material_Preview_Open_Texture_TT")}");
+            }
         }
     }
 

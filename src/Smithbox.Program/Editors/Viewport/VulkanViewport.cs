@@ -591,6 +591,10 @@ public class VulkanViewport : IViewport
             painting = true;
         }
 
+        // Dropping viewport input ends the pan so re-entering does not apply an old mouse delta.
+        if (!canPick || CameraInputLocked)
+            ViewportCamera.MiddleMousePressed = false;
+
         if (canPick)
         {
             // Another source drives the camera (looking through a cutscene camera): no fly or orbit input

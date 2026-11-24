@@ -346,7 +346,7 @@
     },
     {
       "Key": "VIEWPORT_Menubar_Ortho_Pan_Sensitivity_TT",
-      "Text": "The speed of middle mouse panning. At 25 the scene follows the cursor exactly; lower is slower, higher is faster."
+      "Text": "The speed of middle mouse panning. At 25 the scene follows the cursor at the focus depth in perspective and at any depth in orthographic and oblique views."
     },
     {
       "Key": "VIEWPORT_Menubar_Ortho_Size",
@@ -1298,7 +1298,7 @@
     },
     {
       "Key": "VIEWPORT_Overlay_Perspective_Controls",
-      "Text": "Holding click on the viewport will enable camera controls.\nUse WASD to navigate.\nUse right click to rotate the camera.\nHold Shift to temporarily speed up and Ctrl to temporarily slow down.\nScroll the mouse wheel to adjust overall speed.\nNumpad 7, 1 and 3 give the top, front and right views; add Alt for the opposite view.\nHold Ctrl, Alt and left click to make a box selection."
+      "Text": "Holding click on the viewport will enable camera controls.\nUse WASD to navigate.\nPan the screen with the middle mouse button.\nUse right click to rotate the camera.\nHold Shift to temporarily speed up and Ctrl to temporarily slow down.\nScroll the mouse wheel to adjust overall speed.\nNumpad 7, 1 and 3 give the top, front and right views; add Alt for the opposite view.\nHold Ctrl, Alt and left click to make a box selection."
     },
     {
       "Key": "VIEWPORT_Overlay_OrthoOblique_Controls",

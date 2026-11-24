@@ -33,12 +33,26 @@ public class TexCommandQueue
                 var fileName = initcmd[1];
                 var textureName = initcmd[2];
 
-                HandleView(fileName, textureName);
+                HandleView(fileName, textureName, initcmd.Length > 3 ? initcmd[3] : null);
             }
         }
     }
 
-    public void HandleView(string filename, string textureName)
+    public static FileDictionaryEntry FindContainerEntry(ProjectEntry project, string containerPath)
+    {
+        if (string.IsNullOrEmpty(containerPath))
+            return null;
+
+        var key = NormalizeContainerPath(containerPath.Replace(".tpfbdt", ".tpfbhd", StringComparison.OrdinalIgnoreCase));
+
+        return project.Locator.TextureFiles.Entries?.FirstOrDefault(e => NormalizeContainerPath(e.Path) == key)
+            ?? project.Locator.TexturePackedFiles.Entries?.FirstOrDefault(e => NormalizeContainerPath(e.Path) == key);
+    }
+
+    private static string NormalizeContainerPath(string path) =>
+        (path ?? "").Replace('\\', '/').TrimStart('/').ToLowerInvariant();
+
+    public void HandleView(string filename, string textureName, string containerPath = null)
     {
         var activeView = Editor.ViewHandler.ActiveView;
 
@@ -46,64 +60,63 @@ public class TexCommandQueue
             return;
 
         // Packed (.tpfbhd) containers are listed apart from the others
-        var targetFile = Project.Locator.TextureFiles.Entries.FirstOrDefault(e => e.Filename == filename)
-            ?? Project.Locator.TexturePackedFiles.Entries?.FirstOrDefault(e => e.Filename == filename);
+        var targetFile = string.IsNullOrEmpty(containerPath)
+            ? Project.Locator.TextureFiles.Entries.FirstOrDefault(e => e.Filename == filename)
+                ?? Project.Locator.TexturePackedFiles.Entries?.FirstOrDefault(e => e.Filename == filename)
+            : FindContainerEntry(Project, containerPath);
 
         if (targetFile == null)
             return;
 
-        Task<bool> loadTask = Project.Handler.TextureData.PrimaryBank.LoadTextureBinder(targetFile);
+        var bank = Project.Handler.TextureData.PrimaryBank;
+        var isPacked = string.Equals(targetFile.Extension, "tpfbhd", StringComparison.OrdinalIgnoreCase);
+        Task<bool> loadTask = isPacked ? bank.LoadPackedTextureBinder(targetFile) : bank.LoadTextureBinder(targetFile);
 
         Task.WaitAll(loadTask);
 
-        var targetBinder = Project.Handler.TextureData.PrimaryBank.Entries.FirstOrDefault(e => e.Key.Path == targetFile.Path);
+        var containers = isPacked ? bank.PackedEntries : bank.Entries;
+        var targetBinder = containers.FirstOrDefault(e => string.Equals(e.Key.Path, targetFile.Path, StringComparison.OrdinalIgnoreCase));
 
         if (targetBinder.Key == null || targetBinder.Value == null)
             return;
 
+        activeView.Movie.Close();
+        activeView.Selection.ResetSelection();
+        activeView.Selection.AutoSelectTpf = false;
+        activeView.TextureList.SelectAndLoad(null);
         activeView.Selection.SelectTextureFile(targetBinder.Key, targetBinder.Value);
 
-        // TPF: the one named like the file, or the only one (a loose .tpf)
-        var tpfSelected = false;
-        foreach (var entry in targetBinder.Value.Files)
-        {
-            var binderFile = entry.Key;
+        // Prefer the TPF named after the container if several TPFs have the same texture.
+        var files = targetBinder.Value.Files;
+        var preferred = files.FirstOrDefault(entry =>
+            string.Equals(entry.Key.Name, filename, StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(Path.GetFileNameWithoutExtension(entry.Key.Name ?? ""), filename, StringComparison.OrdinalIgnoreCase));
 
-            if (binderFile.Name == filename ||
-                string.Equals(Path.GetFileNameWithoutExtension(binderFile.Name ?? ""), filename, StringComparison.OrdinalIgnoreCase))
+        if (!string.IsNullOrEmpty(textureName))
+        {
+            var match = preferred.Value?.Textures.FirstOrDefault(t =>
+                string.Equals(t.Name, textureName, StringComparison.OrdinalIgnoreCase));
+            if (match != null)
             {
-                activeView.Selection.SelectTpfFile(entry.Key, entry.Value);
-                tpfSelected = true;
-                break;
+                activeView.Selection.SelectTpfFile(preferred.Key, preferred.Value);
+                activeView.TextureList.SelectAndLoad(match);
+                return;
+            }
+            foreach (var file in files)
+            {
+                match = file.Value.Textures.FirstOrDefault(t =>
+                    string.Equals(t.Name, textureName, StringComparison.OrdinalIgnoreCase));
+                if (match != null)
+                {
+                    activeView.Selection.SelectTpfFile(file.Key, file.Value);
+                    activeView.TextureList.SelectAndLoad(match);
+                    return;
+                }
             }
         }
 
-        if (!tpfSelected && targetBinder.Value.Files.Count == 1)
-        {
-            var only = targetBinder.Value.Files.First();
-            activeView.Selection.SelectTpfFile(only.Key, only.Value);
-        }
-
-        if (activeView.Selection.SelectedTpf == null)
-            return;
-
-        // Texture
-        int index = 0;
-        int targetIndex = 0;
-
-        foreach (var entry in activeView.Selection.SelectedTpf.Textures)
-        {
-            if (entry.Name == textureName)
-            {
-                targetIndex = index;
-                activeView.Selection.SelectTextureEntry(entry.Name, entry);
-
-                // TODO: fix this not properly working: the texture entry needs to be pressed again for the texture to appear after the editor switch
-                activeView.TextureList.LoadTexture = true;
-                break;
-            }
-
-            index++;
-        }
+        var fallback = preferred.Key != null ? preferred : files.Count == 1 ? files.First() : default;
+        if (fallback.Key != null)
+            activeView.Selection.SelectTpfFile(fallback.Key, fallback.Value);
     }
 }
