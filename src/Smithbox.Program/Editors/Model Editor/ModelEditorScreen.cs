@@ -1,4 +1,4 @@
-﻿using Hexa.NET.ImGui;
+using Hexa.NET.ImGui;
 using Microsoft.Extensions.Logging;
 using StudioCore.Application;
 using StudioCore.Editors.Common;
@@ -82,6 +82,8 @@ public class ModelEditorScreen : EditorScreen
         ImGui.DockSpace(dsid, new Vector2(0, 0), ref GUI.DockGroup_ModelEditor);
 
         ViewHandler.HandleViews(dsid);
+
+        Project.Handler.MaterialEditor?.TexturePreviews.Update();
 
         SaveCheckWindow.Display();
     }

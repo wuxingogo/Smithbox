@@ -162,10 +162,11 @@ public static class TextureSourceReader
 
     private static Memory<byte>? ReadFile(ProjectEntry project, string path)
     {
-        // Containers outside the project (e.g. DS1's loose map textures, the bundled Smithbox textures) are absolute
-        if (Path.IsPathRooted(path))
+        // A VFS path can start with a slash, e.g. /parts/Common_Body.tpf.
+        // Use the host filesystem only for a fully qualified path that exists there.
+        if (Path.IsPathFullyQualified(path) && File.Exists(path))
         {
-            return File.Exists(path) ? File.ReadAllBytes(path) : null;
+            return File.ReadAllBytes(path);
         }
 
         return project.VFS.FS.FileExists(path) ? project.VFS.FS.ReadFile(path) : null;

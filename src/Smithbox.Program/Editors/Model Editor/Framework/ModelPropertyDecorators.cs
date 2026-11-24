@@ -1,4 +1,4 @@
-﻿using Hexa.NET.ImGui;
+using Hexa.NET.ImGui;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
 using SoulsFormats;
 using StudioCore.Editors.Common;
@@ -10,6 +10,7 @@ using StudioCore.Editors.TextureViewer;
 using StudioCore.Renderer;
 using StudioCore.Utilities;
 using System.Collections;
+using System.Numerics;
 using System.Reflection;
 
 namespace StudioCore.Editors.HavokEditor;
@@ -369,14 +370,63 @@ public static class ModelPropertyDecorators
         }
     }
 
-    // Exports to the project's output folder, using the export type set in the Texture Viewer
-    private static void ExportMaterialTexture(ModelEditorView view, string texturePath)
+    public static void FlverTexturePreview(ModelEditorView view, string path)
+    {
+        if (string.IsNullOrWhiteSpace(path))
+            return;
+
+        ResourceManager.DefaultPool.TryFind<TextureResource>(path, out var handle);
+        var texture = handle?.Get()?.GPUTexture;
+        var materialEditor = view.Project.Handler.MaterialEditor;
+        var name = MaterialTextureIndex.Stem(path);
+        var state = MaterialTexturePreviews.PreviewState.Failed;
+
+        if (texture == null && materialEditor?.Textures.ContainersOf(name).Count > 0)
+        {
+            texture = materialEditor.TexturePreviews.Get(name, out state);
+        }
+
+        var ready = texture != null && texture.Resident && texture.Width > 0 && texture.Height > 0;
+        ImGui.BeginDisabled(!ready);
+        var export = ImGui.Button($"{Icons.Download}##flverTextureExport");
+        ImGui.EndDisabled();
+        GUI.Tooltip(LOC.Get("MODEL_Properties_Material_Preview_Export_Texture_TT"));
+
+        if (export)
+        {
+            ExportMaterialTexture(view, path, texture.TpfTexture);
+        }
+
+        if (!ready)
+        {
+            ImGui.SameLine();
+            ImGui.TextDisabled(LOC.Get(texture != null || state == MaterialTexturePreviews.PreviewState.Loading
+                ? "MAT_Texture_Preview_Loading"
+                : "MAT_Texture_Preview_Failed_Line"));
+            return;
+        }
+
+        // ImGui samples the 2D texture pool. Other texture types can still be exported.
+        if (texture.Pool != SceneRenderer.GlobalTexturePool)
+            return;
+
+        var size = Math.Min(128 * DPI.UIScale(), ImGui.GetContentRegionAvail().X);
+        if (size > 0)
+        {
+            var scale = size / Math.Max(texture.Width, texture.Height);
+            ImGui.Image(new ImTextureID(texture.TexHandle), new Vector2(texture.Width * scale, texture.Height * scale));
+            GUI.Tooltip($"{name}\n{texture.Width} x {texture.Height}");
+        }
+    }
+
+    // Exports to the project's output folder, preferring the format named by the material path
+    private static void ExportMaterialTexture(ModelEditorView view, string texturePath, TPF.Texture previewTexture = null)
     {
         // The model's textures are held in the pool by name, once they have been uploaded
         ResourceManager.DefaultPool.TryFind<TextureResource>(texturePath, out var handle);
 
         // Pooled textures don't keep their data once they are on the GPU, so it is read again from their container
-        var texture = handle?.Get()?.GPUTexture?.TpfTexture;
+        var texture = previewTexture ?? handle?.Get()?.GPUTexture?.TpfTexture;
 
         if (texture == null && handle != null && handle.IsLoaded)
         {
@@ -389,7 +439,17 @@ public static class ModelPropertyDecorators
             return;
         }
 
-        var exportType = CFG.Current.TextureViewerToolbar_ExportTextureType;
+        var exportType = Path.GetExtension(ResourceName.FileName(texturePath)).ToLowerInvariant() switch
+        {
+            ".dds" => TextureExportType.DDS,
+            ".png" => TextureExportType.PNG,
+            ".bmp" => TextureExportType.BMP,
+            ".tga" => TextureExportType.TGA,
+            ".tif" or ".tiff" => TextureExportType.TIFF,
+            ".jpg" or ".jpeg" => TextureExportType.JPEG,
+            ".webp" => TextureExportType.WEBP,
+            _ => CFG.Current.TextureViewerToolbar_ExportTextureType
+        };
 
         var exportDirectory = Path.Join(view.Project.Descriptor.ProjectPath, "output");
         var exportFilePath = Path.Join(exportDirectory, texture.Name);

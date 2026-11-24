@@ -1,4 +1,4 @@
-﻿using Hexa.NET.ImGui;
+using Hexa.NET.ImGui;
 using SoulsFormats;
 using StudioCore.Editors.Common;
 using StudioCore.Editors.HavokEditor;
@@ -569,6 +569,11 @@ public class ModelPropertyView
         if (ImGui.IsItemActive() && !ImGui.IsWindowFocused())
         {
             ImGui.SetItemDefaultFocus();
+        }
+
+        if (owner is IFlverTexture && prop.Name == nameof(IFlverTexture.Path) && oldval is string path)
+        {
+            ModelPropertyDecorators.FlverTexturePreview(View, path);
         }
 
         if (CFG.Current.ModelEditor_Properties_Enable_Type_Column)

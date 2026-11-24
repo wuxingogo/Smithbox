@@ -194,7 +194,7 @@
     },
     {
       "Key": "MODEL_Properties_Material_Preview_Export_Texture_TT",
-      "Text": "Export this texture to the output folder in the project directory, using the export type set in the Texture Editor."
+      "Text": "Export this texture to the project's output folder using the format in its path. If the format is unavailable, use the Texture Editor export setting."
     },
     {
       "Key": "MODEL_Properties_Material_Preview_Log_Texture_Not_Loaded",
