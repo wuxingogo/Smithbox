@@ -65,30 +65,34 @@ public class ModelCommandQueue
         }
 
         if (entry.Value == null)
+        {
+            Smithbox.LogWarning(this, LOC.Get("MODEL_Command_Container_Not_Found", filename));
             return;
+        }
 
-        curView.Selection.SelectedModelContainerWrapper = entry.Value;
-        entry.Value.PopulateModelList();
-
-        if (curView.Selection.SelectedModelContainerWrapper == null)
-            return;
+        var container = entry.Value;
+        container.PopulateModelList();
 
         // Use filename for non-DS2 projects
-        var modelEntry = curView.Selection.SelectedModelContainerWrapper.Models.FirstOrDefault(e =>
+        var modelEntry = container.Models.FirstOrDefault(e =>
             e.Name.Equals(filename, System.StringComparison.OrdinalIgnoreCase));
 
         if (Project.Descriptor.ProjectType is ProjectType.DS2 or ProjectType.DS2S)
         {
-            modelEntry = curView.Selection.SelectedModelContainerWrapper.Models.FirstOrDefault(e =>
+            modelEntry = container.Models.FirstOrDefault(e =>
                 e.Name.Equals(modelFilename, System.StringComparison.OrdinalIgnoreCase));
         }
 
         if (commands.Length <= 4)
-            modelEntry ??= curView.Selection.SelectedModelContainerWrapper.Models.FirstOrDefault();
+            modelEntry ??= container.Models.FirstOrDefault();
 
         if (modelEntry == null)
+        {
+            Smithbox.LogWarning(this, LOC.Get("MODEL_Command_Model_Not_Found", modelFilename, filename));
             return;
+        }
 
+        curView.Selection.SelectedModelContainerWrapper = container;
         curView.LoadModel(modelEntry);
     }
 

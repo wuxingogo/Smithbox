@@ -278,16 +278,22 @@ public class MapEditorView : IEditorView
         ViewportActionManager.AddEventHandler(MapListView);
     }
 
+    private int _lastDisplayFrame = -1;
+
     public void Display(uint dockspaceId, int viewIndex, bool doFocus, bool isActiveView)
     {
+        var frame = ImGui.GetFrameCount();
+        var focusProperties = isActiveView && frame > _lastDisplayFrame + 1;
+        _lastDisplayFrame = frame;
+
         if (CFG.Current.Interface_MapEditor_EditorDisplayType is EditorDisplayType.Windows)
         {
-            DisplayWindows(dockspaceId, viewIndex, doFocus, isActiveView);
+            DisplayWindows(dockspaceId, viewIndex, focusProperties);
         }
 
         if (CFG.Current.Interface_MapEditor_EditorDisplayType is EditorDisplayType.TabbedPanels)
         {
-            DisplayTabbedPanels(dockspaceId, viewIndex, doFocus, isActiveView);
+            DisplayTabbedPanels(dockspaceId, viewIndex, focusProperties);
         }
 
         Universe.ProcessLoadQueue();
@@ -320,7 +326,7 @@ public class MapEditorView : IEditorView
         ViewportSelection.ClearGotoTarget();
     }
 
-    private void DisplayWindows(uint dockspaceId, int viewIndex, bool doFocus, bool isActiveView)
+    private void DisplayWindows(uint dockspaceId, int viewIndex, bool focusProperties)
     {
         // Map List
         ImGui.SetNextWindowDockID(dockspaceId, ImGuiCond.FirstUseEver);
@@ -374,6 +380,11 @@ public class MapEditorView : IEditorView
         // Properties
         ImGui.SetNextWindowDockID(dockspaceId, ImGuiCond.FirstUseEver);
         ImGui.SetNextWindowClass(ref GUI.DockGroup_MapEditorView);
+        if (focusProperties)
+        {
+            ImGui.SetNextWindowFocus();
+        }
+
         if (ImGui.Begin($@"{LOC.Get("MAP_Window_Properties")}##mapEditor_Properties_{viewIndex}", GUI.GetInnerWindowFlags()))
         {
             var width = ImGui.GetContentRegionAvail().X;
@@ -395,7 +406,8 @@ public class MapEditorView : IEditorView
             // Tools
             ImGui.SetNextWindowDockID(dockspaceId, ImGuiCond.FirstUseEver);
             ImGui.SetNextWindowClass(ref GUI.DockGroup_MapEditorView);
-            if (ImGui.Begin($@"{LOC.Get("MAP_Window_Tools")}##mapEditor_ToolWindow_{viewIndex}", GUI.GetInnerWindowFlags()))
+            if (ImGui.Begin($@"{LOC.Get("MAP_Window_Tools")}##mapEditor_ToolWindow_{viewIndex}",
+                GUI.GetInnerWindowFlags() | ImGuiWindowFlags.NoFocusOnAppearing))
             {
                 var width = ImGui.GetContentRegionAvail().X;
                 var height = ImGui.GetContentRegionAvail().Y;
@@ -417,7 +429,7 @@ public class MapEditorView : IEditorView
     }
 
 
-    private void DisplayTabbedPanels(uint dockspaceId, int viewIndex, bool doFocus, bool isActiveView)
+    private void DisplayTabbedPanels(uint dockspaceId, int viewIndex, bool focusProperties)
     {
         // Left Panel
         ImGui.SetNextWindowDockID(dockspaceId, ImGuiCond.FirstUseEver);
@@ -481,7 +493,8 @@ public class MapEditorView : IEditorView
 
             ImGui.BeginTabBar("rightPanelTabs");
 
-            if (ImGui.BeginTabItem(LOC.Get("MAP_Window_Properties")))
+            var propertiesTabFlags = focusProperties ? ImGuiTabItemFlags.SetSelected : ImGuiTabItemFlags.None;
+            if (ImGui.BeginTabItem(LOC.Get("MAP_Window_Properties"), propertiesTabFlags))
             {
                 FocusManager.SetFocus(EditorFocusContext.MapEditor_Properties);
 

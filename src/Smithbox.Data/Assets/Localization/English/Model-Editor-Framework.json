@@ -55,6 +55,14 @@
     {
       "Key": "MODEL_Command_Invalid_Select_Index",
       "Text": "Model select command ignored: '{0}' is not an index."
+    },
+    {
+      "Key": "MODEL_Command_Container_Not_Found",
+      "Text": "Could not find model container '{0}'."
+    },
+    {
+      "Key": "MODEL_Command_Model_Not_Found",
+      "Text": "Could not find model '{0}' in container '{1}'."
     }
   ]
 }

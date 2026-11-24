@@ -1,9 +1,11 @@
 ﻿using Hexa.NET.ImGui;
 using SoulsFormats;
+using StudioCore.Application;
 using StudioCore.Editors.Common;
 using StudioCore.Editors.MetadataEditor;
 using StudioCore.Editors.ParamEditor;
 using StudioCore.Editors.Viewport;
+using StudioCore.Renderer;
 using System.Numerics;
 using System.Reflection;
 using Veldrid.Utilities;
@@ -1322,9 +1324,13 @@ public static class MapEditorDecorations
             if (loadType == "MapPiece")
             {
                 var map = (MapContainer)ent.Parent.Container;
-                var mapPieceName = $"{value}".Replace("m", $"{map.Name}_");
+                var isDs2 = view.Project.Descriptor.ProjectType is ProjectType.DS2 or ProjectType.DS2S;
+                var assetMapId = isDs2 ? map.Name : PathBuilder.GetAssetMapID(view.Project, map.Name);
+                var mapPieceName = isDs2
+                    ? assetMapId
+                    : ModelLocator.MapModelNameToAssetName(view.Project, assetMapId, $"{value}");
 
-                EditorCommandQueue.AddCommand($"model/load/{mapPieceName}/{loadType}/{map.Name}/{value}");
+                EditorCommandQueue.AddCommand($"model/load/{mapPieceName}/{loadType}/{assetMapId}/{value}");
             }
             else
             {
