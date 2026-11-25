@@ -25,9 +25,9 @@ public static class GizmoState
         GUI.ShowActiveStatus(CFG.Current.Viewport_Render_Gizmos);
         GUI.Tooltip(LOC.Get("VIEWPORT_Gizmo_Menu_Action_Display_TT"));
 
-        ImGui.SliderFloat($"{LOC.Get("VIEWPORT_Gizmo_Menu_Input_Size")}##gizmoScale", ref CFG.Current.Viewport_Gizmo_Size_Distance_Scale, 0.01f, 5.0f, ImGuiSliderFlags.AlwaysClamp);
+        PreciseSlider.SliderFloat($"{LOC.Get("VIEWPORT_Gizmo_Menu_Input_Size")}##gizmoScale", ref CFG.Current.Viewport_Gizmo_Size_Distance_Scale, 0.01f, 5.0f, ImGuiSliderFlags.AlwaysClamp);
 
-        if (ImGui.IsItemDeactivatedAfterEdit())
+        if (PreciseSlider.IsCommitted())
         {
             if (CFG.Current.Viewport_Gizmo_Size_Distance_Scale < 0.01)
             {
@@ -39,7 +39,7 @@ public static class GizmoState
             }
         }
 
-        ImGui.SliderFloat($"{LOC.Get("VIEWPORT_Gizmo_Menu_Input_Snap_Rotation_Step")}##gizmoSnapRotationStep",
+        PreciseSlider.SliderFloat($"{LOC.Get("VIEWPORT_Gizmo_Menu_Input_Snap_Rotation_Step")}##gizmoSnapRotationStep",
             ref CFG.Current.Viewport_Gizmo_Snap_Rotation_Step, 0f, 90f, "%.1f", ImGuiSliderFlags.AlwaysClamp);
         GUI.Tooltip(LOC.Get("VIEWPORT_Gizmo_Menu_Input_Snap_Rotation_Step_TT"));
 

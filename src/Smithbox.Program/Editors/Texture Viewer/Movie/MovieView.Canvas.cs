@@ -164,7 +164,7 @@ public partial class MovieView
         {
             ImGui.SetNextItemWidth(200 * DPI.UIScale());
             var frame = Scene.RootFrame;
-            if (ImGui.SliderInt("##rootFrame", ref frame, 0, frames - 1, LOC.Get("TEXVIEW_Movie_Frame_Format")))
+            if (PreciseSlider.SliderInt("##rootFrame", ref frame, 0, frames - 1, LOC.Get("TEXVIEW_Movie_Frame_Format")))
                 Scene.RootFrame = frame;
             GUI.Tooltip(LOC.Get("TEXVIEW_Movie_Root_Frame_TT"));
             ImGui.SameLine();

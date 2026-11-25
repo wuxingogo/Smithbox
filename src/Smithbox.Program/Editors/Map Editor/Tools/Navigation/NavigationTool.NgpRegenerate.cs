@@ -53,7 +53,7 @@ public partial class NavigationTool
         if (steep)
         {
             ImGui.SetNextItemWidth(-1);
-            ImGui.SliderFloat("##navigationNgpRegenSlope", ref slope, 20f, 89f, $"{LOC.Get("MAP_Navigation_Ngp_Steep_Slope")} %.0f°");
+            PreciseSlider.SliderFloat("##navigationNgpRegenSlope", ref slope, 20f, 89f, $"{LOC.Get("MAP_Navigation_Ngp_Steep_Slope")} %.0f°");
             GUI.Tooltip(LOC.Get("MAP_Navigation_Ngp_Steep_Slope_TT"));
         }
         ImGui.Checkbox($"{LOC.Get("MAP_Navigation_Ngp_Regen_Ladders")}##navigationNgpRegenLadders", ref NgpRegenLadders);

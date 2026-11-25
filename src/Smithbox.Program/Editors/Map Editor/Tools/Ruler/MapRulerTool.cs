@@ -464,7 +464,7 @@ public class MapRulerTool
         GUI.SimpleHeader(LOC.Get("MAP_Ruler_Display_Header"), LOC.Get("MAP_Ruler_Display_Header_TT"));
 
         ImGui.SetNextItemWidth(-1);
-        if (ImGui.SliderFloat("##mapRulerPointSize", ref CFG.Current.MapEditor_Ruler_Point_Size, 0.02f, 2.0f, "%.2f m"))
+        if (PreciseSlider.SliderFloat("##mapRulerPointSize", ref CFG.Current.MapEditor_Ruler_Point_Size, 0.02f, 2.0f, "%.2f m"))
             UpdateDrawing();
         GUI.Tooltip(LOC.Get("MAP_Ruler_Point_Size_TT"));
 

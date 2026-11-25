@@ -63,7 +63,7 @@ public class ProjectilePlaybackTool
 
         ImGui.SetNextItemWidth(-1);
 
-        if (ImGui.SliderFloat("##projectileTime", ref simulator.Time, 0, duration, $"{simulator.Time:F2} / {duration:F2} s"))
+        if (PreciseSlider.SliderFloat("##projectileTime", ref simulator.Time, 0, duration, $"{simulator.Time:F2} / {duration:F2} s"))
             simulator.Playing = false;
 
         if (ImGui.Button($"{(simulator.Playing ? LOC.Get("PROJECTILE_Pause") : LOC.Get("PROJECTILE_Play"))}##projectilePlay"))
@@ -90,7 +90,7 @@ public class ProjectilePlaybackTool
         ImGui.Checkbox($"{LOC.Get("PROJECTILE_Loop")}##projectileLoop", ref CFG.Current.ProjectileEditor_Loop);
 
         ImGui.SetNextItemWidth(-1);
-        ImGui.SliderFloat("##projectileSpeed", ref CFG.Current.ProjectileEditor_Speed, 0.05f, 2f, $"{LOC.Get("PROJECTILE_Speed")}: %.2f");
+        PreciseSlider.SliderFloat("##projectileSpeed", ref CFG.Current.ProjectileEditor_Speed, 0.05f, 2f, $"{LOC.Get("PROJECTILE_Speed")}: %.2f");
 
         // Effects
         GUI.Spacer();

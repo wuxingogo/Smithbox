@@ -35,10 +35,10 @@ public class InterfacePrefs
             Draw = () => {
                 DPI.ApplyInputWidth();
                 // AlwaysClamp keeps a typed (ctrl+click) value inside the range: a scale of 0 would collapse the UI
-                ImGui.SliderFloat("##inputValue", ref PreferencesUtil.TempScale, CFG.MinUIScale, CFG.MaxUIScale, "%.2f",
+                PreciseSlider.SliderFloat("##inputValue", ref PreferencesUtil.TempScale, CFG.MinUIScale, CFG.MaxUIScale, "%.2f",
                     ImGuiSliderFlags.AlwaysClamp);
 
-                if (ImGui.IsItemDeactivatedAfterEdit())
+                if (PreciseSlider.IsCommitted())
                 {
                     CFG.Current.Interface_UI_Scale = (float)Math.Round(PreferencesUtil.TempScale * 20) / 20;
                     PreferencesUtil.TempScale = CFG.Current.Interface_UI_Scale;
@@ -102,10 +102,10 @@ public class InterfacePrefs
 
             Draw = () => {
                 DPI.ApplyInputWidth();
-                ImGui.SliderFloat("##inputValue", ref CFG.Current.Interface_Font_Size, CFG.MinFontSize, CFG.MaxFontSize, "%.0f",
+                PreciseSlider.SliderFloat("##inputValue", ref CFG.Current.Interface_Font_Size, CFG.MinFontSize, CFG.MaxFontSize, "%.0f",
                     ImGuiSliderFlags.AlwaysClamp);
 
-                if (ImGui.IsItemDeactivatedAfterEdit())
+                if (PreciseSlider.IsCommitted())
                 {
                     CFG.Current.Interface_Font_Size = (float)Math.Round(CFG.Current.Interface_Font_Size);
                     DPI.UIScaleChanged?.Invoke(null, EventArgs.Empty);
@@ -264,7 +264,7 @@ public class InterfacePrefs
             Draw = () => {
                 DPI.ApplyInputWidth();
                 // AlwaysClamp keeps a typed (ctrl+click) value inside the range
-                ImGui.SliderFloat("##inputValue", ref CFG.Current.Interface_Editor_Rail_Icon_Scale,
+                PreciseSlider.SliderFloat("##inputValue", ref CFG.Current.Interface_Editor_Rail_Icon_Scale,
                     CFG.MinRailIconScale, CFG.MaxRailIconScale, "%.2f", ImGuiSliderFlags.AlwaysClamp);
 
                 ImGui.SameLine();

@@ -99,7 +99,7 @@ public class CutsceneTimelineView
         ImGui.SameLine();
         ImGui.SetNextItemWidth(Math.Max(120, ImGui.GetContentRegionAvail().X * 0.35f));
         var frame = playback.Frame;
-        if (ImGui.SliderFloat("##cutsceneFrame", ref frame, 0, last, "%.0f"))
+        if (StudioCore.Application.PreciseSlider.SliderFloat("##cutsceneFrame", ref frame, 0, last, "%.0f"))
             playback.Frame = frame;
 
         ImGui.SameLine();

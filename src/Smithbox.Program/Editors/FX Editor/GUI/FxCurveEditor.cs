@@ -390,7 +390,7 @@ public class FxCurveEditor
         if (component && Working.Components > 1)
         {
             ImGui.SetNextItemWidth(-1);
-            if (ImGui.SliderInt("##fxCurveComponent", ref Component, 0, Working.Components - 1, LOC.Get("FX_CurveEditor_Component")))
+            if (StudioCore.Application.PreciseSlider.SliderInt("##fxCurveComponent", ref Component, 0, Working.Components - 1, LOC.Get("FX_CurveEditor_Component")))
                 Component = Math.Clamp(Component, 0, Working.Components - 1);
             GUI.Tooltip(LOC.Get("FX_CurveEditor_Component_TT"));
         }

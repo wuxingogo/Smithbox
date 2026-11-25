@@ -161,15 +161,15 @@ public class ViewportGridTool
                 ref CFG.Current.Viewport_Grid_Display_Axis_Lines);
             GUI.Tooltip(LOC.Get("VIEWPORT_GridConfig_Display_Axis_Lines_TT"));
 
-            ImGui.SliderFloat($"{LOC.Get("VIEWPORT_GridConfig_Opacity")}##gridOpacity",
+            PreciseSlider.SliderFloat($"{LOC.Get("VIEWPORT_GridConfig_Opacity")}##gridOpacity",
                 ref CFG.Current.Viewport_Grid_Opacity, 0.05f, 1.0f, "%.2f", ImGuiSliderFlags.AlwaysClamp);
             GUI.Tooltip(LOC.Get("VIEWPORT_GridConfig_Opacity_TT"));
 
-            ImGui.SliderFloat($"{LOC.Get("VIEWPORT_GridConfig_Hidden_Opacity")}##gridHiddenOpacity",
+            PreciseSlider.SliderFloat($"{LOC.Get("VIEWPORT_GridConfig_Hidden_Opacity")}##gridHiddenOpacity",
                 ref CFG.Current.Viewport_Grid_Hidden_Opacity, 0f, 1.0f, "%.2f", ImGuiSliderFlags.AlwaysClamp);
             GUI.Tooltip(LOC.Get("VIEWPORT_GridConfig_Hidden_Opacity_TT"));
 
-            ImGui.SliderFloat($"{LOC.Get("VIEWPORT_GridConfig_Line_Width")}##gridLineWidth",
+            PreciseSlider.SliderFloat($"{LOC.Get("VIEWPORT_GridConfig_Line_Width")}##gridLineWidth",
                 ref CFG.Current.Viewport_Grid_Line_Width, 0.5f, 4.0f, "%.2f", ImGuiSliderFlags.AlwaysClamp);
             GUI.Tooltip(LOC.Get("VIEWPORT_GridConfig_Line_Width_TT"));
 

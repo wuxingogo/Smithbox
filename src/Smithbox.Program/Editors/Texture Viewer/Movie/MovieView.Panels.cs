@@ -587,7 +587,7 @@ public partial class MovieView
         {
             var frame = Scene.SpriteFrames.GetValueOrDefault(sprite.Id);
             ImGui.SetNextItemWidth(-1);
-            if (ImGui.SliderInt("##spriteFrame", ref frame, 0, frames - 1, LOC.Get("TEXVIEW_Movie_Frame_Format")))
+            if (PreciseSlider.SliderInt("##spriteFrame", ref frame, 0, frames - 1, LOC.Get("TEXVIEW_Movie_Frame_Format")))
                 Scene.SpriteFrames[sprite.Id] = frame;
             GUI.Tooltip(LOC.Get("TEXVIEW_Movie_Sprite_Frame_TT"));
 

@@ -106,7 +106,7 @@ public partial class NavigationTool
         GUI.SimpleHeader(LOC.Get("MAP_Navigation_Edit_Cursor_Opacity_Header"), LOC.Get("MAP_Navigation_Edit_Cursor_Opacity_Header_TT"));
 
         ImGui.SetNextItemWidth(-1);
-        ImGui.SliderFloat("##navigationNvmEditCursorOpacity", ref VertexCursorOpacity, 0f, 100f, "%.0f%%");
+        PreciseSlider.SliderFloat("##navigationNvmEditCursorOpacity", ref VertexCursorOpacity, 0f, 100f, "%.0f%%");
         GUI.Tooltip(LOC.Get("MAP_Navigation_Edit_Cursor_Opacity_Input_TT"));
 
         // Controls

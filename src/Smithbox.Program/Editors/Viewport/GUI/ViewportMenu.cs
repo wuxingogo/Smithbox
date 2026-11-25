@@ -396,11 +396,11 @@ public class ViewportMenu
                 ref CFG.Current.Viewport_Wireframe_Line_Color);
             GUI.Tooltip(LOC.Get("VIEWPORT_Menubar_Setting_Wireframe_Color_TT"));
 
-            ImGui.SliderFloat($"{LOC.Get("VIEWPORT_Menubar_Setting_Wireframe_Opacity")}##wireframeOpacity",
+            PreciseSlider.SliderFloat($"{LOC.Get("VIEWPORT_Menubar_Setting_Wireframe_Opacity")}##wireframeOpacity",
                 ref CFG.Current.Viewport_Wireframe_Line_Opacity, 0.0f, 1.0f);
             GUI.Tooltip(LOC.Get("VIEWPORT_Menubar_Setting_Wireframe_Opacity_TT"));
 
-            ImGui.SliderFloat($"{LOC.Get("VIEWPORT_Menubar_Setting_Wireframe_Width")}##wireframeWidth",
+            PreciseSlider.SliderFloat($"{LOC.Get("VIEWPORT_Menubar_Setting_Wireframe_Width")}##wireframeWidth",
                 ref CFG.Current.Viewport_Wireframe_Line_Width, 0.5f, 8.0f);
             GUI.Tooltip(LOC.Get("VIEWPORT_Menubar_Setting_Wireframe_Width_TT"));
 

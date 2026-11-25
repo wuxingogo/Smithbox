@@ -340,7 +340,7 @@ public partial class CollisionEditorTool
             GUI.SimpleHeader(LOC.Get("MAP_CollisionEditor_Cursor_Opacity_Header"), LOC.Get("MAP_CollisionEditor_Cursor_Opacity_Header_TT"));
 
             ImGui.SetNextItemWidth(-1);
-            ImGui.SliderFloat("##collisionEditorCursorOpacity", ref CFG.Current.MapEditor_CollisionEditor_Cursor_Fill_Alpha, 0f, 100f, "%.0f%%");
+            PreciseSlider.SliderFloat("##collisionEditorCursorOpacity", ref CFG.Current.MapEditor_CollisionEditor_Cursor_Fill_Alpha, 0f, 100f, "%.0f%%");
             GUI.Tooltip(LOC.Get("MAP_CollisionEditor_Cursor_Opacity_Input_TT"));
         }
 

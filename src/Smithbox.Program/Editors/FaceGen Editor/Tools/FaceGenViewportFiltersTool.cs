@@ -65,7 +65,7 @@ public class FaceGenViewportFiltersTool
         if (viewport.Turntable)
         {
             ImGui.SetNextItemWidth(-1);
-            ImGui.SliderFloat("##faceGenToolTurntableSpeed", ref viewport.TurntableSpeed, 5f, 90f,
+            PreciseSlider.SliderFloat("##faceGenToolTurntableSpeed", ref viewport.TurntableSpeed, 5f, 90f,
                 LOC.Get("FACEGEN_Camera_Turntable_Speed"));
         }
 

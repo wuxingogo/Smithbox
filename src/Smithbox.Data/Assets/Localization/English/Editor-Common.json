@@ -1,5 +1,9 @@
 {
   "Entries": [
+    { "Key": "GUI_PreciseSlider_Edit", "Text": "Enter exact value" },
+    { "Key": "GUI_PreciseSlider_Apply", "Text": "Apply" },
+    { "Key": "GUI_PreciseSlider_Cancel", "Text": "Cancel" },
+    { "Key": "GUI_PreciseSlider_Vector", "Text": "X, Y, Z" },
     {
       "Key": "EDITOR_Help_Button_TT",
       "Text": "How this works: click for a description and how it is used."

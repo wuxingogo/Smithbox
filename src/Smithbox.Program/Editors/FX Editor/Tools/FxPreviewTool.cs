@@ -77,16 +77,16 @@ public class FxPreviewTool
         if (playback.Motion == 1)
         {
             ImGui.SetNextItemWidth(-1);
-            ImGui.SliderFloat("##fxMotionSpeed", ref CFG.Current.FxEditor_Preview_Motion_Speed, 0.1f, 100f, LOC.Get("FX_PreviewTool_Motion_Speed_Format"), ImGuiSliderFlags.Logarithmic);
+            StudioCore.Application.PreciseSlider.SliderFloat("##fxMotionSpeed", ref CFG.Current.FxEditor_Preview_Motion_Speed, 0.1f, 100f, LOC.Get("FX_PreviewTool_Motion_Speed_Format"), ImGuiSliderFlags.Logarithmic);
             GUI.Tooltip(LOC.Get("FX_PreviewTool_Motion_Speed_TT"));
         }
         else if (playback.Motion == 2)
         {
             ImGui.SetNextItemWidth(-1);
-            ImGui.SliderFloat("##fxSwingRadius", ref CFG.Current.FxEditor_Preview_Swing_Radius, 0.1f, 10f, LOC.Get("FX_PreviewTool_Swing_Radius_Format"), ImGuiSliderFlags.Logarithmic);
+            StudioCore.Application.PreciseSlider.SliderFloat("##fxSwingRadius", ref CFG.Current.FxEditor_Preview_Swing_Radius, 0.1f, 10f, LOC.Get("FX_PreviewTool_Swing_Radius_Format"), ImGuiSliderFlags.Logarithmic);
             GUI.Tooltip(LOC.Get("FX_PreviewTool_Swing_Radius_TT"));
             ImGui.SetNextItemWidth(-1);
-            ImGui.SliderFloat("##fxSwingSpeed", ref CFG.Current.FxEditor_Preview_Swing_Speed, 10f, 2000f, LOC.Get("FX_PreviewTool_Swing_Speed_Format"), ImGuiSliderFlags.Logarithmic);
+            StudioCore.Application.PreciseSlider.SliderFloat("##fxSwingSpeed", ref CFG.Current.FxEditor_Preview_Swing_Speed, 10f, 2000f, LOC.Get("FX_PreviewTool_Swing_Speed_Format"), ImGuiSliderFlags.Logarithmic);
             GUI.Tooltip(LOC.Get("FX_PreviewTool_Swing_Speed_TT"));
         }
 
@@ -108,10 +108,10 @@ public class FxPreviewTool
         if (CFG.Current.FxEditor_Preview_Wind)
         {
             ImGui.SetNextItemWidth(-1);
-            ImGui.SliderFloat("##fxWindYaw", ref CFG.Current.FxEditor_Preview_Wind_Yaw, -180f, 180f, LOC.Get("FX_PreviewTool_Wind_Yaw_Format"));
+            StudioCore.Application.PreciseSlider.SliderFloat("##fxWindYaw", ref CFG.Current.FxEditor_Preview_Wind_Yaw, -180f, 180f, LOC.Get("FX_PreviewTool_Wind_Yaw_Format"));
             GUI.Tooltip(LOC.Get("FX_PreviewTool_Wind_Yaw_TT"));
             ImGui.SetNextItemWidth(-1);
-            ImGui.SliderFloat("##fxWindStrength", ref CFG.Current.FxEditor_Preview_Wind_Strength, 0.1f, 100f, LOC.Get("FX_PreviewTool_Wind_Strength_Format"), ImGuiSliderFlags.Logarithmic);
+            StudioCore.Application.PreciseSlider.SliderFloat("##fxWindStrength", ref CFG.Current.FxEditor_Preview_Wind_Strength, 0.1f, 100f, LOC.Get("FX_PreviewTool_Wind_Strength_Format"), ImGuiSliderFlags.Logarithmic);
             GUI.Tooltip(LOC.Get("FX_PreviewTool_Wind_Strength_TT"));
         }
 
@@ -125,7 +125,7 @@ public class FxPreviewTool
 
         float time = playback.Time;
         ImGui.SetNextItemWidth(-1);
-        if (ImGui.SliderFloat("##fxTime", ref time, 0, playback.Length, "%.2f s"))
+        if (StudioCore.Application.PreciseSlider.SliderFloat("##fxTime", ref time, 0, playback.Length, "%.2f s"))
         {
             playback.Seek(time);
             playback.Playing = false;
@@ -153,7 +153,7 @@ public class FxPreviewTool
 
         float speed = playback.Speed;
         ImGui.SetNextItemWidth(-1);
-        if (ImGui.SliderFloat("##fxSpeed", ref speed, 0.05f, 4f, "%.2fx", ImGuiSliderFlags.Logarithmic))
+        if (StudioCore.Application.PreciseSlider.SliderFloat("##fxSpeed", ref speed, 0.05f, 4f, "%.2fx", ImGuiSliderFlags.Logarithmic))
             playback.Speed = speed;
         GUI.Tooltip(LOC.Get("FX_PreviewTool_Speed_TT"));
 
@@ -168,7 +168,7 @@ public class FxPreviewTool
             playback.SetPreviewState(state);
 
         ImGui.SetNextItemWidth(-1);
-        if (ImGui.SliderInt("##fxPreviewState", ref state, 0, stateCount - 1))
+        if (StudioCore.Application.PreciseSlider.SliderInt("##fxPreviewState", ref state, 0, stateCount - 1))
             playback.SetPreviewState(state);
         GUI.Tooltip(LOC.Get("FX_PreviewTool_State_TT"));
 
@@ -220,7 +220,7 @@ public class FxPreviewTool
         GUI.SimpleHeader(LOC.Get("FX_PreviewTool_Brightness_Header"), LOC.Get("FX_PreviewTool_Brightness_Header_TT"));
 
         ImGui.SetNextItemWidth(-1);
-        ImGui.SliderFloat("##fxBillboardBrightness", ref CFG.Current.FxEditor_Viewport_Billboard_Brightness, 0.01f, 10f, "%.2fx", ImGuiSliderFlags.Logarithmic);
+        StudioCore.Application.PreciseSlider.SliderFloat("##fxBillboardBrightness", ref CFG.Current.FxEditor_Viewport_Billboard_Brightness, 0.01f, 10f, "%.2fx", ImGuiSliderFlags.Logarithmic);
         GUI.Tooltip(LOC.Get("FX_PreviewTool_Brightness_TT"));
 
         // Light Brightness
@@ -228,7 +228,7 @@ public class FxPreviewTool
         GUI.SimpleHeader(LOC.Get("FX_PreviewTool_Light_Brightness_Header"), LOC.Get("FX_PreviewTool_Light_Brightness_Header_TT"));
 
         ImGui.SetNextItemWidth(-1);
-        ImGui.SliderFloat("##fxLightBrightness", ref CFG.Current.FxEditor_Viewport_Light_Brightness, 0.001f, 100f, "%.3fx", ImGuiSliderFlags.Logarithmic);
+        StudioCore.Application.PreciseSlider.SliderFloat("##fxLightBrightness", ref CFG.Current.FxEditor_Viewport_Light_Brightness, 0.001f, 100f, "%.3fx", ImGuiSliderFlags.Logarithmic);
         GUI.Tooltip(LOC.Get("FX_PreviewTool_Light_Brightness_TT"));
 
         // Billboards drawn, and textures no binder holds

@@ -696,7 +696,7 @@ public class CollisionEditorUserDefined
         GUI.SimpleHeader(LOC.Get("MAP_CollisionEditor_User_Display_Header"), LOC.Get("MAP_CollisionEditor_User_Display_Header_TT"));
 
         ImGui.SetNextItemWidth(-1);
-        if (ImGui.SliderFloat("##collisionUserPointSize", ref CFG.Current.MapEditor_CollisionEditor_User_Point_Size, 0.02f, 2.0f, "%.2f m"))
+        if (PreciseSlider.SliderFloat("##collisionUserPointSize", ref CFG.Current.MapEditor_CollisionEditor_User_Point_Size, 0.02f, 2.0f, "%.2f m"))
             DrawingDirty = true;
         GUI.Tooltip(LOC.Get("MAP_CollisionEditor_User_Point_Size_TT"));
 

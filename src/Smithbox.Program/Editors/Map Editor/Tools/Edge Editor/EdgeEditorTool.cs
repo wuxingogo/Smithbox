@@ -239,16 +239,16 @@ public partial class EdgeEditorTool
         ColorEntry("edgeColorHover", "MAP_EdgeEditor_Color_Hover", ref CFG.Current.Viewport_Edge_Hover_Color);
 
         ImGui.SetNextItemWidth(-1);
-        ImGui.SliderFloat($"##edgePointSize", ref CFG.Current.Viewport_Edge_Point_Size, 0.02f, 1.0f,
+        PreciseSlider.SliderFloat($"##edgePointSize", ref CFG.Current.Viewport_Edge_Point_Size, 0.02f, 1.0f,
             LOC.Get("MAP_EdgeEditor_Point_Size_Format"));
         GUI.Tooltip(LOC.Get("MAP_EdgeEditor_Point_Size_TT"));
-        changed |= ImGui.IsItemDeactivatedAfterEdit();
+        changed |= PreciseSlider.IsCommitted();
 
         ImGui.SetNextItemWidth(-1);
-        ImGui.SliderFloat($"##edgeSegmentRadius", ref CFG.Current.Viewport_Edge_Segment_Radius, 0.01f, 0.5f,
+        PreciseSlider.SliderFloat($"##edgeSegmentRadius", ref CFG.Current.Viewport_Edge_Segment_Radius, 0.01f, 0.5f,
             LOC.Get("MAP_EdgeEditor_Segment_Radius_Format"));
         GUI.Tooltip(LOC.Get("MAP_EdgeEditor_Segment_Radius_TT"));
-        changed |= ImGui.IsItemDeactivatedAfterEdit();
+        changed |= PreciseSlider.IsCommitted();
 
         if (changed)
         {

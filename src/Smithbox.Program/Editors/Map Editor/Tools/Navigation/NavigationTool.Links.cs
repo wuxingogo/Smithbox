@@ -78,7 +78,7 @@ public partial class NavigationTool
         }
 
         ImGui.SetNextItemWidth(-1);
-        ImGui.SliderInt("##navigationLinkClearance", ref LinkClearance, 0, NavUserEdges.DefaultClearance, $"{LOC.Get("MAP_Navigation_Link_Clearance")} %d");
+        PreciseSlider.SliderInt("##navigationLinkClearance", ref LinkClearance, 0, NavUserEdges.DefaultClearance, $"{LOC.Get("MAP_Navigation_Link_Clearance")} %d");
         GUI.Tooltip(LOC.Get("MAP_Navigation_Link_Clearance_TT"));
 
         if (LinkMode && ShowOverlay)

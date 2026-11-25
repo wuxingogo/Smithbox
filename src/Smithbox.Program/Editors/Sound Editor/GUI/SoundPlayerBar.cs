@@ -68,7 +68,7 @@ public class SoundPlayerBar
         ImGui.SameLine();
         var volume = player.Volume * 100f;
         ImGui.SetNextItemWidth(120 * DPI.UIScale());
-        if (ImGui.SliderFloat("##soundVolume", ref volume, 0f, 100f, $"{LOC.Get("SOUND_Player_Volume")} %.0f%%"))
+        if (StudioCore.Application.PreciseSlider.SliderFloat("##soundVolume", ref volume, 0f, 100f, $"{LOC.Get("SOUND_Player_Volume")} %.0f%%"))
             player.Volume = volume / 100f;
         GUI.Tooltip(LOC.Get("SOUND_Player_Volume_TT"));
 
@@ -78,12 +78,12 @@ public class SoundPlayerBar
         ImGui.SetNextItemWidth(-1);
         if (duration <= 0) ImGui.BeginDisabled();
         var text = $"{SoundEditorView.FormatTime(pos)} / {SoundEditorView.FormatTime(duration)}";
-        if (ImGui.SliderFloat("##soundPosition", ref pos, 0f, Math.Max(duration, 0.001f), text))
+        if (StudioCore.Application.PreciseSlider.SliderFloat("##soundPosition", ref pos, 0f, Math.Max(duration, 0.001f), text))
         {
             Dragging = true;
             DragValue = pos;
         }
-        if (ImGui.IsItemDeactivatedAfterEdit() && Dragging)
+        if (StudioCore.Application.PreciseSlider.IsCommitted() && Dragging)
         {
             player.Seek(DragValue);
             Dragging = false;

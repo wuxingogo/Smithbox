@@ -153,7 +153,7 @@ public partial class NavigationTool
         GUI.SimpleHeader(LOC.Get("MAP_Navigation_Gates_Rebuild_Header"), LOC.Get("MAP_Navigation_Gates_Rebuild_Header_TT"));
 
         ImGui.SetNextItemWidth(-1);
-        ImGui.SliderFloat("##navigationGateJoin", ref GateJoin, 0.5f, 20f, $"{LOC.Get("MAP_Navigation_Gates_Join")} %.1f m");
+        PreciseSlider.SliderFloat("##navigationGateJoin", ref GateJoin, 0.5f, 20f, $"{LOC.Get("MAP_Navigation_Gates_Join")} %.1f m");
         GUI.Tooltip(LOC.Get("MAP_Navigation_Gates_Join_TT"));
 
         GUI.MultiButtonInput("navigationGateRebuildActions",

@@ -213,7 +213,7 @@ public class ReplicateAction
             GUI.SimpleHeader("Circle - Radius", "Circle Radius", "The circle radius to use during the replication process.", UI.Current.ImGui_Default_Text_Color);
 
             GUI.SetInputWidth();
-            ImGui.SliderFloat("##Radius", ref CFG.Current.Replicator_Circle_Radius, 0.1f, 100);
+            PreciseSlider.SliderFloat("##Radius", ref CFG.Current.Replicator_Circle_Radius, 0.1f, 100);
             GUI.Tooltip("Press Ctrl+Left Click to input directly.\nThe radius of the circle on which to place the entities.");
 
             if (CFG.Current.Replicator_Circle_Size < 1)

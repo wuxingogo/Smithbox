@@ -110,7 +110,7 @@ public class ViewportFiltersAction
             GUI.Tooltip("Hide an icon while the map's geometry is in front of it, as a mesh would be. The test is a few frames behind the camera, so icons can take a moment to appear or hide while it moves.");
 
             GUI.SetInputWidth();
-            ImGui.SliderFloat("Max Distance##regionIconMaxDistance", ref CFG.Current.MapEditor_Region_Icon_Max_Distance, 10.0f, 5000.0f, "%.0f", ImGuiSliderFlags.Logarithmic);
+            PreciseSlider.SliderFloat("Max Distance##regionIconMaxDistance", ref CFG.Current.MapEditor_Region_Icon_Max_Distance, 10.0f, 5000.0f, "%.0f", ImGuiSliderFlags.Logarithmic);
             GUI.Tooltip("Only regions within this distance of the camera are displayed as icons. Ctrl+Click to type a value.");
 
             var color = CFG.Current.MapEditor_Region_Icon_Color / 255f;
@@ -256,7 +256,7 @@ public class ViewportFiltersAction
         GUI.Tooltip("Start every effect in range again from its beginning.");
 
         GUI.SetInputWidth();
-        ImGui.SliderFloat("Speed##mapEffectsSpeed", ref playback.Speed, 0.1f, 4.0f, "%.2fx");
+        PreciseSlider.SliderFloat("Speed##mapEffectsSpeed", ref playback.Speed, 0.1f, 4.0f, "%.2fx");
         GUI.Tooltip("The playback speed of the effects. 1 is the game's speed.");
 
         // Which elements
@@ -295,7 +295,7 @@ public class ViewportFiltersAction
         GUI.Tooltip("Only effects within this distance of the camera are played.");
 
         GUI.SetInputWidth();
-        ImGui.SliderInt("Max Effects##mapEffectsMaxCount", ref cfg.MapEditor_Effects_Max_Count, 1, 256);
+        PreciseSlider.SliderInt("Max Effects##mapEffectsMaxCount", ref cfg.MapEditor_Effects_Max_Count, 1, 256);
         GUI.Tooltip("The most effects played at once; the nearest to the camera are played first.");
 
         // Status
@@ -357,7 +357,7 @@ public class ViewportFiltersAction
 
         if (GetNavVolumeHeightRange() is (float min, float max))
         {
-            if (ImGui.SliderFloat("Height##navVolumeSliceHeight", ref height, min, max, "%.1f"))
+            if (PreciseSlider.SliderFloat("Height##navVolumeSliceHeight", ref height, min, max, "%.1f"))
             {
                 NavVolumeSlice.Height = height;
             }

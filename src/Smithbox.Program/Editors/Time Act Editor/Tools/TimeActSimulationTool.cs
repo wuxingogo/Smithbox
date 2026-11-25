@@ -119,7 +119,7 @@ public class TimeActSimulationTool
         GUI.SimpleHeader(LOC.Get("TAE_SimulationTool_Turn_Header"), LOC.Get("TAE_SimulationTool_Turn_Header_TT"));
 
         ImGui.SetNextItemWidth(-1);
-        ImGui.SliderFloat("##timeActSimTurnTarget", ref CFG.Current.TimeActEditor_Turn_Target_Angle, -180f, 180f,
+        StudioCore.Application.PreciseSlider.SliderFloat("##timeActSimTurnTarget", ref CFG.Current.TimeActEditor_Turn_Target_Angle, -180f, 180f,
             $"{LOC.Get("TAE_SimulationTool_Turn_Target")}: %.0f");
         GUI.Tooltip(LOC.Get("TAE_SimulationTool_Turn_Target_TT"));
 
@@ -346,7 +346,7 @@ public class TimeActSimulationTool
     private static void DisplayScale(string key, string id, ref float value)
     {
         ImGui.SetNextItemWidth(-1);
-        ImGui.SliderFloat($"##{id}", ref value, 0f, MaxRootMotionScale, $"{LOC.Get(key)}: %.2f");
+        StudioCore.Application.PreciseSlider.SliderFloat($"##{id}", ref value, 0f, MaxRootMotionScale, $"{LOC.Get(key)}: %.2f");
         GUI.Tooltip(LOC.Get($"{key}_TT"));
     }
 

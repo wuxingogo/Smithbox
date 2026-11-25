@@ -506,7 +506,7 @@ public class FacePropertiesView
                 : LOC.Get("FACEGEN_Field_Byte_Value", value));
         }
 
-        ValueMenu(editor, paramName, row, field, FaceGenParams.Neutral);
+        ValueMenu(editor, paramName, row, field, FaceGenParams.Neutral, param);
 
         if (range != null)
         {
@@ -586,12 +586,34 @@ public class FacePropertiesView
     /// A slider's, colour's or part's right-click menu: back to neutral, back to vanilla, and the row in the Param
     /// Editor
     /// </summary>
-    private void ValueMenu(ParamEditorScreen editor, string paramName, Param.Row row, FaceField field, int? neutral)
+    private void ValueMenu(ParamEditorScreen editor, string paramName, Param.Row row, FaceField field, int? neutral,
+        Param sliderParam = null)
     {
         if (!ImGui.BeginPopupContextItem("faceGenValueMenu"))
             return;
 
         var fields = FieldNames(field);
+
+        if (sliderParam != null && ImGui.BeginMenu(LOC.Get("GUI_PreciseSlider_Edit")))
+        {
+            var stored = GetInt(row, field.Name);
+            var next = stored;
+            if (FaceGenModel.GameRange(Project, sliderParam, field.Name) is { } range)
+            {
+                var gameValue = FaceGenModel.ToGameValue(range, stored);
+                if (PreciseSlider.EditNumber(ref gameValue, range.Min, range.Max, ImGui.IsWindowAppearing()))
+                    next = FaceGenModel.ToByte(range, gameValue);
+            }
+            else
+            {
+                PreciseSlider.EditNumber(ref next, 0, 255, ImGui.IsWindowAppearing());
+            }
+
+            if (next != stored)
+                FaceGenEdits.SetField(editor, paramName, row, field.Name, next,
+                    LOC.Get("FACEGEN_Action_Edit_Field", field.Name, row.ID));
+            ImGui.EndMenu();
+        }
 
         if (neutral is { } value &&
             ImGui.Selectable($"{LOC.Get("FACEGEN_Value_Reset_Neutral", value)}##faceGenResetNeutral"))

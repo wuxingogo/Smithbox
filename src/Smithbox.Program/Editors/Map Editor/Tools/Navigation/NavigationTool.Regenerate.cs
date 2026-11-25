@@ -92,7 +92,7 @@ public partial class NavigationTool
         ImGui.Checkbox($"{LOC.Get("MAP_Navigation_Regenerate_Derive_Face_Data")}##navigationRegenDerive", ref RegenDeriveFaceData);
         GUI.Tooltip(LOC.Get("MAP_Navigation_Regenerate_Derive_Face_Data_TT"));
         ImGui.SetNextItemWidth(-1);
-        if (ImGui.SliderFloat("##navigationRegenCurrentFaceHeight", ref RegenCurrentFaceHeight, 0.25f, 10f, $"{LOC.Get("MAP_Navigation_Regenerate_Current_Face_Height")} %.2f m"))
+        if (PreciseSlider.SliderFloat("##navigationRegenCurrentFaceHeight", ref RegenCurrentFaceHeight, 0.25f, 10f, $"{LOC.Get("MAP_Navigation_Regenerate_Current_Face_Height")} %.2f m"))
             RegenCurrentFaceHeight = Math.Clamp(RegenCurrentFaceHeight, 0.25f, 10f);
         GUI.Tooltip(LOC.Get("MAP_Navigation_Regenerate_Current_Face_Height_TT"));
         ImGui.Checkbox($"{LOC.Get("MAP_Navigation_Regenerate_Skip_Runtime_Cuts")}##navigationRegenSkipCuts", ref RegenSkipRuntimeCuts);

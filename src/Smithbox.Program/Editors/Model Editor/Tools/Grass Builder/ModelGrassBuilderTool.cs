@@ -261,7 +261,7 @@ public class ModelGrassBuilderTool
         GUI.SimpleHeader(LOC.Get("MODEL_GrassBuilder_Faces_Header"), LOC.Get("MODEL_GrassBuilder_Faces_Header_TT"));
 
         ImGui.SetNextItemWidth(-1);
-        ImGui.SliderFloat("##modelGrassBuilderMaxAngle", ref MaxAngle, 0, 180, LOC.Get("MODEL_GrassBuilder_Max_Angle_Format"));
+        PreciseSlider.SliderFloat("##modelGrassBuilderMaxAngle", ref MaxAngle, 0, 180, LOC.Get("MODEL_GrassBuilder_Max_Angle_Format"));
         GUI.Tooltip(LOC.Get("MODEL_GrassBuilder_Max_Angle_TT"));
 
         var (kept, total) = GetKept(meshes);
@@ -315,7 +315,7 @@ public class ModelGrassBuilderTool
         for (var s = 0; s < GrassBuilder.SlotCount; s++)
         {
             ImGui.SetNextItemWidth(-1);
-            ImGui.SliderFloat($"##modelGrassBuilderDensity{s}", ref Densities[s], 0, 1, LOC.Get("MODEL_GrassBuilder_Density_Format", s));
+            PreciseSlider.SliderFloat($"##modelGrassBuilderDensity{s}", ref Densities[s], 0, 1, LOC.Get("MODEL_GrassBuilder_Density_Format", s));
             GUI.Tooltip(LOC.Get("MODEL_GrassBuilder_Density_TT", s));
 
             Densities[s] = Math.Max(0, Densities[s]);

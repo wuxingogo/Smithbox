@@ -112,7 +112,7 @@ public class ModelDisplayRotationTool
         GUI.Tooltip(LOC.Get("MODEL_DisplayRotation_Spin_TT"));
 
         ImGui.SetNextItemWidth(-1);
-        ImGui.SliderFloat("##modelDisplayRotationSpinSpeed", ref _spinSpeed, -360.0f, 360.0f, "%.0f°/s");
+        PreciseSlider.SliderFloat("##modelDisplayRotationSpinSpeed", ref _spinSpeed, -360.0f, 360.0f, "%.0f°/s");
         GUI.Tooltip(LOC.Get("MODEL_DisplayRotation_Spin_Speed_TT"));
 
         // Actions

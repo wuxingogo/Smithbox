@@ -230,34 +230,34 @@ public partial class NavigationTool
         bool snap = p.SnapToCollision;
 
         ImGui.SetNextItemWidth(-1);
-        ImGui.SliderFloat($"##navigationGenerateCell_{id}", ref cell, 0.1f, 1f, $"{LOC.Get("MAP_Navigation_Generate_Cell")} %.2f m");
+        PreciseSlider.SliderFloat($"##navigationGenerateCell_{id}", ref cell, 0.1f, 1f, $"{LOC.Get("MAP_Navigation_Generate_Cell")} %.2f m");
         GUI.Tooltip(LOC.Get("MAP_Navigation_Generate_Cell_TT"));
         ImGui.SetNextItemWidth(-1);
-        ImGui.SliderFloat($"##navigationGenerateCellHeight_{id}", ref cellHeight, 0.02f, 0.5f, $"{LOC.Get("MAP_Navigation_Generate_Cell_Height")} %.2f m");
+        PreciseSlider.SliderFloat($"##navigationGenerateCellHeight_{id}", ref cellHeight, 0.02f, 0.5f, $"{LOC.Get("MAP_Navigation_Generate_Cell_Height")} %.2f m");
         GUI.Tooltip(LOC.Get("MAP_Navigation_Generate_Cell_Height_TT"));
         ImGui.SetNextItemWidth(-1);
-        ImGui.SliderFloat($"##navigationGenerateRadius_{id}", ref radius, 0f, 2f, $"{LOC.Get("MAP_Navigation_Generate_Radius")} %.2f m");
+        PreciseSlider.SliderFloat($"##navigationGenerateRadius_{id}", ref radius, 0f, 2f, $"{LOC.Get("MAP_Navigation_Generate_Radius")} %.2f m");
         GUI.Tooltip(LOC.Get("MAP_Navigation_Generate_Radius_TT"));
         ImGui.SetNextItemWidth(-1);
-        ImGui.SliderFloat($"##navigationGenerateHeight_{id}", ref height, 0.5f, 8f, $"{LOC.Get("MAP_Navigation_Generate_Height")} %.2f m");
+        PreciseSlider.SliderFloat($"##navigationGenerateHeight_{id}", ref height, 0.5f, 8f, $"{LOC.Get("MAP_Navigation_Generate_Height")} %.2f m");
         GUI.Tooltip(LOC.Get("MAP_Navigation_Generate_Height_TT"));
         ImGui.SetNextItemWidth(-1);
-        ImGui.SliderFloat($"##navigationGenerateClimb_{id}", ref climb, 0f, 3f, $"{LOC.Get("MAP_Navigation_Generate_Climb")} %.2f m");
+        PreciseSlider.SliderFloat($"##navigationGenerateClimb_{id}", ref climb, 0f, 3f, $"{LOC.Get("MAP_Navigation_Generate_Climb")} %.2f m");
         GUI.Tooltip(LOC.Get("MAP_Navigation_Generate_Climb_TT"));
         ImGui.SetNextItemWidth(-1);
-        ImGui.SliderFloat($"##navigationGenerateSlope_{id}", ref slope, 5f, 89f, $"{LOC.Get("MAP_Navigation_Generate_Slope")} %.0f°");
+        PreciseSlider.SliderFloat($"##navigationGenerateSlope_{id}", ref slope, 5f, 89f, $"{LOC.Get("MAP_Navigation_Generate_Slope")} %.0f°");
         GUI.Tooltip(LOC.Get("MAP_Navigation_Generate_Slope_TT"));
         ImGui.SetNextItemWidth(-1);
-        ImGui.SliderFloat($"##navigationGenerateEdge_{id}", ref edge, 0f, 30f, $"{LOC.Get("MAP_Navigation_Generate_Edge")} %.1f m");
+        PreciseSlider.SliderFloat($"##navigationGenerateEdge_{id}", ref edge, 0f, 30f, $"{LOC.Get("MAP_Navigation_Generate_Edge")} %.1f m");
         GUI.Tooltip(LOC.Get("MAP_Navigation_Generate_Edge_TT"));
         ImGui.SetNextItemWidth(-1);
-        ImGui.SliderFloat($"##navigationGenerateEdgeError_{id}", ref edgeError, 0.1f, 3f, $"{LOC.Get("MAP_Navigation_Generate_Edge_Error")} %.2f m");
+        PreciseSlider.SliderFloat($"##navigationGenerateEdgeError_{id}", ref edgeError, 0.1f, 3f, $"{LOC.Get("MAP_Navigation_Generate_Edge_Error")} %.2f m");
         GUI.Tooltip(LOC.Get("MAP_Navigation_Generate_Edge_Error_TT"));
         ImGui.SetNextItemWidth(-1);
-        ImGui.SliderFloat($"##navigationGenerateMinRegion_{id}", ref minRegion, 0f, 50f, $"{LOC.Get("MAP_Navigation_Generate_Min_Region")} %.1f m²");
+        PreciseSlider.SliderFloat($"##navigationGenerateMinRegion_{id}", ref minRegion, 0f, 50f, $"{LOC.Get("MAP_Navigation_Generate_Min_Region")} %.1f m²");
         GUI.Tooltip(LOC.Get("MAP_Navigation_Generate_Min_Region_TT"));
         ImGui.SetNextItemWidth(-1);
-        ImGui.SliderFloat($"##navigationGenerateMergeRegion_{id}", ref mergeRegion, 0f, 200f, $"{LOC.Get("MAP_Navigation_Generate_Merge_Region")} %.1f m²");
+        PreciseSlider.SliderFloat($"##navigationGenerateMergeRegion_{id}", ref mergeRegion, 0f, 200f, $"{LOC.Get("MAP_Navigation_Generate_Merge_Region")} %.1f m²");
         GUI.Tooltip(LOC.Get("MAP_Navigation_Generate_Merge_Region_TT"));
         ImGui.Checkbox($"{LOC.Get("MAP_Navigation_Generate_Snap")}##navigationGenerateSnap_{id}", ref snap);
         GUI.Tooltip(LOC.Get("MAP_Navigation_Generate_Snap_TT"));
@@ -283,27 +283,27 @@ public partial class NavigationTool
         if (shape == NavFaceShape.Triangles)
         {
             ImGui.SetNextItemWidth(-1);
-            ImGui.SliderFloat($"##navigationGenerateTriangleEdge_{id}", ref triangleEdge, 0f, 30f, triangleEdge <= 0 ? LOC.Get("MAP_Navigation_Generate_Triangle_Edge_Off") : $"{LOC.Get("MAP_Navigation_Generate_Triangle_Edge")} %.1f m");
+            PreciseSlider.SliderFloat($"##navigationGenerateTriangleEdge_{id}", ref triangleEdge, 0f, 30f, triangleEdge <= 0 ? LOC.Get("MAP_Navigation_Generate_Triangle_Edge_Off") : $"{LOC.Get("MAP_Navigation_Generate_Triangle_Edge")} %.1f m");
             GUI.Tooltip(LOC.Get("MAP_Navigation_Generate_Triangle_Edge_TT"));
         }
         else
         {
             ImGui.SetNextItemWidth(-1);
-            ImGui.SliderInt($"##navigationGenerateMaxCorners_{id}", ref maxCorners, 3, 6, $"{LOC.Get("MAP_Navigation_Generate_Max_Corners")} %d");
+            PreciseSlider.SliderInt($"##navigationGenerateMaxCorners_{id}", ref maxCorners, 3, 6, $"{LOC.Get("MAP_Navigation_Generate_Max_Corners")} %d");
             GUI.Tooltip(LOC.Get("MAP_Navigation_Generate_Max_Corners_TT"));
             ImGui.SetNextItemWidth(-1);
-            ImGui.SliderFloat($"##navigationGenerateFaceSize_{id}", ref faceSize, 0f, 10f, faceSize <= 0 ? LOC.Get("MAP_Navigation_Generate_Face_Size_Off") : $"{LOC.Get("MAP_Navigation_Generate_Face_Size")} %.1f m");
+            PreciseSlider.SliderFloat($"##navigationGenerateFaceSize_{id}", ref faceSize, 0f, 10f, faceSize <= 0 ? LOC.Get("MAP_Navigation_Generate_Face_Size_Off") : $"{LOC.Get("MAP_Navigation_Generate_Face_Size")} %.1f m");
             GUI.Tooltip(LOC.Get("MAP_Navigation_Generate_Face_Size_TT"));
             ImGui.Checkbox($"{LOC.Get("MAP_Navigation_Generate_Triangles_Only")}##navigationGenerateTriangles_{id}", ref trianglesOnly);
             GUI.Tooltip(LOC.Get("MAP_Navigation_Generate_Triangles_Only_TT"));
         }
         ImGui.SetNextItemWidth(-1);
-        ImGui.SliderFloat($"##navigationGenerateContour_{id}", ref contour, 0f, 1f, contour <= 0 ? LOC.Get("MAP_Navigation_Generate_Contour_Off") : $"{LOC.Get("MAP_Navigation_Generate_Contour")} %.2f m");
+        PreciseSlider.SliderFloat($"##navigationGenerateContour_{id}", ref contour, 0f, 1f, contour <= 0 ? LOC.Get("MAP_Navigation_Generate_Contour_Off") : $"{LOC.Get("MAP_Navigation_Generate_Contour")} %.2f m");
         GUI.Tooltip(LOC.Get("MAP_Navigation_Generate_Contour_TT"));
         if (contour > 0)
         {
             ImGui.SetNextItemWidth(-1);
-            ImGui.SliderFloat($"##navigationGenerateContourEdge_{id}", ref contourEdge, 0.1f, 4f, $"{LOC.Get("MAP_Navigation_Generate_Contour_Edge")} %.2f m");
+            PreciseSlider.SliderFloat($"##navigationGenerateContourEdge_{id}", ref contourEdge, 0.1f, 4f, $"{LOC.Get("MAP_Navigation_Generate_Contour_Edge")} %.2f m");
             GUI.Tooltip(LOC.Get("MAP_Navigation_Generate_Contour_Edge_TT"));
         }
         ImGui.Checkbox($"{LOC.Get("MAP_Navigation_Generate_Simplify")}##navigationGenerateSimplify_{id}", ref simplify);
@@ -311,11 +311,11 @@ public partial class NavigationTool
         if (simplify)
         {
             ImGui.SetNextItemWidth(-1);
-            ImGui.SliderFloat($"##navigationGenerateSimplifyError_{id}", ref simplifyError, 0.02f, 1f, $"{LOC.Get("MAP_Navigation_Generate_Simplify_Error")} %.2f m");
+            PreciseSlider.SliderFloat($"##navigationGenerateSimplifyError_{id}", ref simplifyError, 0.02f, 1f, $"{LOC.Get("MAP_Navigation_Generate_Simplify_Error")} %.2f m");
             GUI.Tooltip(LOC.Get("MAP_Navigation_Generate_Simplify_Error_TT"));
         }
         ImGui.SetNextItemWidth(-1);
-        ImGui.SliderFloat($"##navigationGenerateSpill_{id}", ref spill, 0f, 1f, spill <= 0 ? LOC.Get("MAP_Navigation_Generate_Spill_Off") : $"{LOC.Get("MAP_Navigation_Generate_Spill")} %.2f m");
+        PreciseSlider.SliderFloat($"##navigationGenerateSpill_{id}", ref spill, 0f, 1f, spill <= 0 ? LOC.Get("MAP_Navigation_Generate_Spill_Off") : $"{LOC.Get("MAP_Navigation_Generate_Spill")} %.2f m");
         GUI.Tooltip(LOC.Get("MAP_Navigation_Generate_Spill_TT"));
 
         // Jump and fall links
@@ -331,13 +331,13 @@ public partial class NavigationTool
         if (linksOverride ?? links)
         {
             ImGui.SetNextItemWidth(-1);
-            ImGui.SliderFloat($"##navigationGenerateJumpHeight_{id}", ref jumpHeight, 0f, 5f, jumpHeight <= 0 ? LOC.Get("MAP_Navigation_Generate_Jump_Height_Off") : $"{LOC.Get("MAP_Navigation_Generate_Jump_Height")} %.1f m");
+            PreciseSlider.SliderFloat($"##navigationGenerateJumpHeight_{id}", ref jumpHeight, 0f, 5f, jumpHeight <= 0 ? LOC.Get("MAP_Navigation_Generate_Jump_Height_Off") : $"{LOC.Get("MAP_Navigation_Generate_Jump_Height")} %.1f m");
             GUI.Tooltip(LOC.Get("MAP_Navigation_Generate_Jump_Height_TT"));
             ImGui.SetNextItemWidth(-1);
-            ImGui.SliderFloat($"##navigationGenerateFallHeight_{id}", ref fallHeight, 0f, 25f, $"{LOC.Get("MAP_Navigation_Generate_Fall_Height")} %.1f m");
+            PreciseSlider.SliderFloat($"##navigationGenerateFallHeight_{id}", ref fallHeight, 0f, 25f, $"{LOC.Get("MAP_Navigation_Generate_Fall_Height")} %.1f m");
             GUI.Tooltip(LOC.Get("MAP_Navigation_Generate_Fall_Height_TT"));
             ImGui.SetNextItemWidth(-1);
-            ImGui.SliderFloat($"##navigationGenerateLinkReach_{id}", ref reach, 0.5f, 12f, $"{LOC.Get("MAP_Navigation_Generate_Link_Reach")} %.1f m");
+            PreciseSlider.SliderFloat($"##navigationGenerateLinkReach_{id}", ref reach, 0.5f, 12f, $"{LOC.Get("MAP_Navigation_Generate_Link_Reach")} %.1f m");
             GUI.Tooltip(LOC.Get("MAP_Navigation_Generate_Link_Reach_TT"));
         }
 

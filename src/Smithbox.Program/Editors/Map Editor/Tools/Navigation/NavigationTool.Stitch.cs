@@ -75,15 +75,15 @@ public partial class NavigationTool
         GUI.Tooltip(LOC.Get("MAP_Navigation_Stitch_Open_Only_TT"));
 
         ImGui.SetNextItemWidth(-1);
-        ImGui.SliderFloat("##navigationStitchSeparation", ref StitchSeparation, 0.01f, 1f, $"{LOC.Get("MAP_Navigation_Stitch_Separation")} %.2f m");
+        PreciseSlider.SliderFloat("##navigationStitchSeparation", ref StitchSeparation, 0.01f, 1f, $"{LOC.Get("MAP_Navigation_Stitch_Separation")} %.2f m");
         GUI.Tooltip(LOC.Get("MAP_Navigation_Stitch_Separation_TT"));
 
         ImGui.SetNextItemWidth(-1);
-        ImGui.SliderFloat("##navigationStitchStep", ref StitchStep, 0.05f, 3f, $"{LOC.Get("MAP_Navigation_Stitch_Step")} %.2f m");
+        PreciseSlider.SliderFloat("##navigationStitchStep", ref StitchStep, 0.05f, 3f, $"{LOC.Get("MAP_Navigation_Stitch_Step")} %.2f m");
         GUI.Tooltip(LOC.Get("MAP_Navigation_Stitch_Step_TT"));
 
         ImGui.SetNextItemWidth(-1);
-        ImGui.SliderFloat("##navigationStitchOverlap", ref StitchOverlap, 0f, 0.5f, $"{LOC.Get("MAP_Navigation_Stitch_Overlap")} %.2f m");
+        PreciseSlider.SliderFloat("##navigationStitchOverlap", ref StitchOverlap, 0f, 0.5f, $"{LOC.Get("MAP_Navigation_Stitch_Overlap")} %.2f m");
         GUI.Tooltip(LOC.Get("MAP_Navigation_Stitch_Overlap_TT"));
 
         GUI.MultiButtonInput("navigationStitchFindActions",

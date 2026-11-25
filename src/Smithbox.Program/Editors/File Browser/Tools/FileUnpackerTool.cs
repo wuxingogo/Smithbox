@@ -95,7 +95,7 @@ public class FileUnpackerTool
             CFG.Current.UnpackDirectory = UnpackDirectory;
         }
 
-        ImGui.SliderInt($"{LOC.Get("FILE_FileUnpacker_Threads")}##unpackThreads", ref CFG.Current.FileBrowser_Unpack_Threads, 1, 32);
+        PreciseSlider.SliderInt($"{LOC.Get("FILE_FileUnpacker_Threads")}##unpackThreads", ref CFG.Current.FileBrowser_Unpack_Threads, 1, 32);
         GUI.Tooltip(LOC.Get("FILE_FileUnpacker_Threads_TT"));
 
         GUI.Spacer();

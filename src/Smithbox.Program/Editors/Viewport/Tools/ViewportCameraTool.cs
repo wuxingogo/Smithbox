@@ -142,7 +142,7 @@ public static class ViewportCameraTool
         float min, float max, string format, ImGuiSliderFlags flags)
     {
         var value = get();
-        if (ImGui.SliderFloat(label, ref value, min, max, format, flags))
+        if (PreciseSlider.SliderFloat(label, ref value, min, max, format, flags))
         {
             set(value);
         }
@@ -194,21 +194,21 @@ public static class ViewportCameraTool
             0.0f, 0.1f, "%.3f", ImGuiSliderFlags.AlwaysClamp);
 
         // The speeds span four orders of magnitude, so the sliders are logarithmic to keep the low end usable
-        if (ImGui.SliderFloat($"{LOC.Get("VIEWPORT_Menubar_Camera_Speed_Slow")}##cameraSpeedSlow",
+        if (PreciseSlider.SliderFloat($"{LOC.Get("VIEWPORT_Menubar_Camera_Speed_Slow")}##cameraSpeedSlow",
             ref camera.CameraMoveSpeed_Slow, 0.1f, 20.0f, "%.1f", ImGuiSliderFlags.AlwaysClamp | ImGuiSliderFlags.Logarithmic))
         {
             CFG.Current.Viewport_Camera_MoveSpeed_Slow = camera.CameraMoveSpeed_Slow;
         }
         GUI.Tooltip(LOC.Get("VIEWPORT_Menubar_Camera_Speed_Slow_TT"));
 
-        if (ImGui.SliderFloat($"{LOC.Get("VIEWPORT_Menubar_Camera_Speed_Normal")}##cameraSpeedNormal",
+        if (PreciseSlider.SliderFloat($"{LOC.Get("VIEWPORT_Menubar_Camera_Speed_Normal")}##cameraSpeedNormal",
             ref camera.CameraMoveSpeed_Normal, 0.1f, 200.0f, "%.1f", ImGuiSliderFlags.AlwaysClamp | ImGuiSliderFlags.Logarithmic))
         {
             CFG.Current.Viewport_Camera_MoveSpeed_Normal = camera.CameraMoveSpeed_Normal;
         }
         GUI.Tooltip(LOC.Get("VIEWPORT_Menubar_Camera_Speed_Normal_TT"));
 
-        if (ImGui.SliderFloat($"{LOC.Get("VIEWPORT_Menubar_Camera_Speed_Fast")}##cameraSpeedFast",
+        if (PreciseSlider.SliderFloat($"{LOC.Get("VIEWPORT_Menubar_Camera_Speed_Fast")}##cameraSpeedFast",
             ref camera.CameraMoveSpeed_Fast, 5.0f, 9999.0f, "%.1f", ImGuiSliderFlags.AlwaysClamp | ImGuiSliderFlags.Logarithmic))
         {
             CFG.Current.Viewport_Camera_MoveSpeed_Fast = camera.CameraMoveSpeed_Fast;
@@ -233,7 +233,7 @@ public static class ViewportCameraTool
             () => CFG.Current.Viewport_Orthographic_Far_Clip, v => CFG.Current.Viewport_Orthographic_Far_Clip = v,
             10.0f, -1000000.0f, 1000000.0f, "%.0f");
 
-        if (ImGui.SliderFloat($"{LOC.Get("VIEWPORT_Menubar_Ortho_Size")}##orthoSize",
+        if (PreciseSlider.SliderFloat($"{LOC.Get("VIEWPORT_Menubar_Ortho_Size")}##orthoSize",
             ref camera.OrthographicSize, camera.OrthographicMinSize, camera.OrthographicMaxSize, "%.1f",
             ImGuiSliderFlags.AlwaysClamp | ImGuiSliderFlags.Logarithmic))
         {
@@ -241,7 +241,7 @@ public static class ViewportCameraTool
         }
         GUI.Tooltip(LOC.Get("VIEWPORT_Menubar_Ortho_Size_TT"));
 
-        if (ImGui.SliderFloat($"{LOC.Get("VIEWPORT_Menubar_Ortho_Pan_Sensitivity")}##orthoPanSensitivity",
+        if (PreciseSlider.SliderFloat($"{LOC.Get("VIEWPORT_Menubar_Ortho_Pan_Sensitivity")}##orthoPanSensitivity",
             ref camera.PanSensitivity, 1.0f, 100.0f, "%.1f", ImGuiSliderFlags.AlwaysClamp))
         {
             CFG.Current.Viewport_MousePan_Sensitivity = camera.PanSensitivity;
@@ -264,14 +264,14 @@ public static class ViewportCameraTool
             LOC.Get("VIEWPORT_ENUM_ViewMode_Oblique"),
             LOC.Get("VIEWPORT_Camera_Tool_Oblique_Header_TT"));
 
-        if (ImGui.SliderFloat($"{LOC.Get("VIEWPORT_Menubar_Oblique_Angle")}##obliqueAngle",
+        if (PreciseSlider.SliderFloat($"{LOC.Get("VIEWPORT_Menubar_Oblique_Angle")}##obliqueAngle",
             ref camera.ObliqueAngle, 0.0f, 90.0f, "%.1f", ImGuiSliderFlags.AlwaysClamp))
         {
             CFG.Current.Viewport_DefaultObliqueAngle = camera.ObliqueAngle;
         }
         GUI.Tooltip(LOC.Get("VIEWPORT_Menubar_Oblique_Angle_TT"));
 
-        if (ImGui.SliderFloat($"{LOC.Get("VIEWPORT_Menubar_Oblique_Scaling")}##obliqueScaling",
+        if (PreciseSlider.SliderFloat($"{LOC.Get("VIEWPORT_Menubar_Oblique_Scaling")}##obliqueScaling",
             ref camera.ObliqueScaling, 0.0f, 1.0f, "%.2f", ImGuiSliderFlags.AlwaysClamp))
         {
             CFG.Current.Viewport_DefaultObliqueScaling = camera.ObliqueScaling;
@@ -306,7 +306,7 @@ public static class ViewportCameraTool
         ImGui.BeginDisabled(!camera.SliceEnabled);
 
         var sliceThickness = camera.SliceHalfDepth * 2.0f;
-        if (ImGui.SliderFloat($"{LOC.Get("VIEWPORT_Menubar_Slice_Thickness")}##sliceThickness",
+        if (PreciseSlider.SliderFloat($"{LOC.Get("VIEWPORT_Menubar_Slice_Thickness")}##sliceThickness",
             ref sliceThickness, ViewportCamera.SliceMinHalfDepth * 2.0f, ViewportCamera.SliceMaxHalfDepth * 2.0f,
             "%.2f", ImGuiSliderFlags.AlwaysClamp | ImGuiSliderFlags.Logarithmic))
         {

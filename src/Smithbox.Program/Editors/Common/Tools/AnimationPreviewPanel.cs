@@ -244,7 +244,7 @@ public class AnimationPreviewPanel
 
             ImGui.SetNextItemWidth(-1);
             var time = animator.Time;
-            if (ImGui.SliderFloat("##animationTime", ref time, 0, animator.Duration,
+            if (PreciseSlider.SliderFloat("##animationTime", ref time, 0, animator.Duration,
                     $"{time:F2} / {animator.Duration:F2} s (frame {(int)animator.Frame})"))
             {
                 animator.SetPlaying(false);
@@ -273,7 +273,7 @@ public class AnimationPreviewPanel
             ImGui.Checkbox("Loop##animationLoop", ref animator.Loop);
 
             ImGui.SetNextItemWidth(-1);
-            ImGui.SliderFloat("##animationSpeed", ref animator.Speed, 0.05f, 2f, "Speed: %.2f");
+            PreciseSlider.SliderFloat("##animationSpeed", ref animator.Speed, 0.05f, 2f, "Speed: %.2f");
 
             GUI.Spacer();
         }

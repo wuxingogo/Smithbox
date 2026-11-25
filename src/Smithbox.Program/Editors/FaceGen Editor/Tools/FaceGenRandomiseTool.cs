@@ -75,7 +75,7 @@ public class FaceGenRandomiseTool
         GUI.Tooltip(LOC.Get("FACEGEN_Randomise_From_Neutral_TT"));
 
         ImGui.SetNextItemWidth(-1);
-        ImGui.SliderFloat("##faceGenRandomStrength", ref Options.Strength, 0f, 1f, LOC.Get("FACEGEN_Randomise_Strength"));
+        PreciseSlider.SliderFloat("##faceGenRandomStrength", ref Options.Strength, 0f, 1f, LOC.Get("FACEGEN_Randomise_Strength"));
 
         ImGui.Checkbox($"{LOC.Get("FACEGEN_Randomise_Parts")}##faceGenRandomParts", ref Options.Parts);
         GUI.Tooltip(LOC.Get("FACEGEN_Randomise_Parts_TT"));

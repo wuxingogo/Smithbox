@@ -583,19 +583,19 @@ public partial class FirstPersonTool
         var changed = false;
 
         ImGui.SetNextItemWidth(-1);
-        changed |= ImGui.SliderFloat("##mapFirstPersonEyeHeight", ref CFG.Current.MapEditor_FirstPerson_Eye_Height, 0.5f, 3.0f, LOC.Get("MAP_FirstPerson_Eye_Height_Format"));
+        changed |= PreciseSlider.SliderFloat("##mapFirstPersonEyeHeight", ref CFG.Current.MapEditor_FirstPerson_Eye_Height, 0.5f, 3.0f, LOC.Get("MAP_FirstPerson_Eye_Height_Format"));
         GUI.Tooltip(LOC.Get("MAP_FirstPerson_Eye_Height_TT"));
 
         ImGui.SetNextItemWidth(-1);
-        changed |= ImGui.SliderFloat("##mapFirstPersonHeight", ref CFG.Current.MapEditor_FirstPerson_Height, 0.5f, 3.5f, LOC.Get("MAP_FirstPerson_Height_Format"));
+        changed |= PreciseSlider.SliderFloat("##mapFirstPersonHeight", ref CFG.Current.MapEditor_FirstPerson_Height, 0.5f, 3.5f, LOC.Get("MAP_FirstPerson_Height_Format"));
         GUI.Tooltip(LOC.Get("MAP_FirstPerson_Height_TT"));
 
         ImGui.SetNextItemWidth(-1);
-        changed |= ImGui.SliderFloat("##mapFirstPersonRadius", ref CFG.Current.MapEditor_FirstPerson_Radius, 0.1f, 1.0f, LOC.Get("MAP_FirstPerson_Radius_Format"));
+        changed |= PreciseSlider.SliderFloat("##mapFirstPersonRadius", ref CFG.Current.MapEditor_FirstPerson_Radius, 0.1f, 1.0f, LOC.Get("MAP_FirstPerson_Radius_Format"));
         GUI.Tooltip(LOC.Get("MAP_FirstPerson_Radius_TT"));
 
         ImGui.SetNextItemWidth(-1);
-        changed |= ImGui.SliderFloat("##mapFirstPersonSlope", ref CFG.Current.MapEditor_FirstPerson_Max_Slope, 10f, 80f, LOC.Get("MAP_FirstPerson_Max_Slope_Format"));
+        changed |= PreciseSlider.SliderFloat("##mapFirstPersonSlope", ref CFG.Current.MapEditor_FirstPerson_Max_Slope, 10f, 80f, LOC.Get("MAP_FirstPerson_Max_Slope_Format"));
         GUI.Tooltip(LOC.Get("MAP_FirstPerson_Max_Slope_TT"));
 
         // The head stays inside the capsule
@@ -606,23 +606,23 @@ public partial class FirstPersonTool
         GUI.SimpleHeader(LOC.Get("MAP_FirstPerson_Movement_Header"), LOC.Get("MAP_FirstPerson_Movement_Header_TT"));
 
         ImGui.SetNextItemWidth(-1);
-        ImGui.SliderFloat("##mapFirstPersonWalkSpeed", ref CFG.Current.MapEditor_FirstPerson_Walk_Speed, 0.5f, 15f, LOC.Get("MAP_FirstPerson_Walk_Speed_Format"));
+        PreciseSlider.SliderFloat("##mapFirstPersonWalkSpeed", ref CFG.Current.MapEditor_FirstPerson_Walk_Speed, 0.5f, 15f, LOC.Get("MAP_FirstPerson_Walk_Speed_Format"));
         GUI.Tooltip(LOC.Get("MAP_FirstPerson_Walk_Speed_TT"));
 
         ImGui.SetNextItemWidth(-1);
-        ImGui.SliderFloat("##mapFirstPersonRunSpeed", ref CFG.Current.MapEditor_FirstPerson_Run_Speed, 0.5f, 30f, LOC.Get("MAP_FirstPerson_Run_Speed_Format"));
+        PreciseSlider.SliderFloat("##mapFirstPersonRunSpeed", ref CFG.Current.MapEditor_FirstPerson_Run_Speed, 0.5f, 30f, LOC.Get("MAP_FirstPerson_Run_Speed_Format"));
         GUI.Tooltip(LOC.Get("MAP_FirstPerson_Run_Speed_TT"));
 
         ImGui.SetNextItemWidth(-1);
-        ImGui.SliderFloat("##mapFirstPersonJumpHeight", ref CFG.Current.MapEditor_FirstPerson_Jump_Height, 0f, 5f, LOC.Get("MAP_FirstPerson_Jump_Height_Format"));
+        PreciseSlider.SliderFloat("##mapFirstPersonJumpHeight", ref CFG.Current.MapEditor_FirstPerson_Jump_Height, 0f, 5f, LOC.Get("MAP_FirstPerson_Jump_Height_Format"));
         GUI.Tooltip(LOC.Get("MAP_FirstPerson_Jump_Height_TT"));
 
         ImGui.SetNextItemWidth(-1);
-        ImGui.SliderFloat("##mapFirstPersonGravity", ref CFG.Current.MapEditor_FirstPerson_Gravity, 1f, 60f, LOC.Get("MAP_FirstPerson_Gravity_Format"));
+        PreciseSlider.SliderFloat("##mapFirstPersonGravity", ref CFG.Current.MapEditor_FirstPerson_Gravity, 1f, 60f, LOC.Get("MAP_FirstPerson_Gravity_Format"));
         GUI.Tooltip(LOC.Get("MAP_FirstPerson_Gravity_TT"));
 
         ImGui.SetNextItemWidth(-1);
-        ImGui.SliderFloat("##mapFirstPersonStepHeight", ref CFG.Current.MapEditor_FirstPerson_Step_Height, 0f, 1f, LOC.Get("MAP_FirstPerson_Step_Height_Format"));
+        PreciseSlider.SliderFloat("##mapFirstPersonStepHeight", ref CFG.Current.MapEditor_FirstPerson_Step_Height, 0f, 1f, LOC.Get("MAP_FirstPerson_Step_Height_Format"));
         GUI.Tooltip(LOC.Get("MAP_FirstPerson_Step_Height_TT"));
 
         changed |= ImGui.Checkbox($"{LOC.Get("MAP_FirstPerson_Slide_Not_Standable")}##mapFirstPersonSlide", ref CFG.Current.MapEditor_FirstPerson_Slide_Not_Standable);

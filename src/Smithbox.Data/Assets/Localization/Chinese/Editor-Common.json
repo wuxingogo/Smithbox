@@ -1,5 +1,9 @@
 {
   "Entries": [
+    { "Key": "GUI_PreciseSlider_Edit", "Text": "输入精确数值" },
+    { "Key": "GUI_PreciseSlider_Apply", "Text": "应用" },
+    { "Key": "GUI_PreciseSlider_Cancel", "Text": "取消" },
+    { "Key": "GUI_PreciseSlider_Vector", "Text": "X、Y、Z（用英文逗号分隔）" },
     {
       "Key": "EDITOR_Short_Project_Type_Undefined",
       "Text": "未定义"

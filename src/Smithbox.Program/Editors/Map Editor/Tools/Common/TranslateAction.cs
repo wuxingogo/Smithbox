@@ -195,7 +195,7 @@ public class TranslateAction
 
         GUI.SetInputWidth();
         var unit0 = CFG.Current.MapEditor_Selection_Position_Increment_0;
-        if (ImGui.SliderFloat("##positionIncrement0", ref unit0, 0.0f, 999.0f))
+        if (PreciseSlider.SliderFloat("##positionIncrement0", ref unit0, 0.0f, 999.0f))
         {
             CFG.Current.MapEditor_Selection_Position_Increment_0 = unit0;
         }
@@ -207,7 +207,7 @@ public class TranslateAction
         GUI.SetInputWidth();
 
         var unit1 = CFG.Current.MapEditor_Selection_Position_Increment_1;
-        if (ImGui.SliderFloat("##positionIncrement1", ref unit1, 0.0f, 999.0f))
+        if (PreciseSlider.SliderFloat("##positionIncrement1", ref unit1, 0.0f, 999.0f))
         {
             CFG.Current.MapEditor_Selection_Position_Increment_1 = unit1;
         }
@@ -219,7 +219,7 @@ public class TranslateAction
         GUI.SetInputWidth();
 
         var unit2 = CFG.Current.MapEditor_Selection_Position_Increment_2;
-        if (ImGui.SliderFloat("##positionIncrement2", ref unit2, 0.0f, 999.0f))
+        if (PreciseSlider.SliderFloat("##positionIncrement2", ref unit2, 0.0f, 999.0f))
         {
             CFG.Current.MapEditor_Selection_Position_Increment_2 = unit2;
         }
@@ -231,7 +231,7 @@ public class TranslateAction
         GUI.SetInputWidth();
 
         var unit3 = CFG.Current.MapEditor_Selection_Position_Increment_3;
-        if (ImGui.SliderFloat("##positionIncrement3", ref unit3, 0.0f, 999.0f))
+        if (PreciseSlider.SliderFloat("##positionIncrement3", ref unit3, 0.0f, 999.0f))
         {
             CFG.Current.MapEditor_Selection_Position_Increment_3 = unit3;
         }
@@ -243,7 +243,7 @@ public class TranslateAction
         GUI.SetInputWidth();
 
         var unit4 = CFG.Current.MapEditor_Selection_Position_Increment_4;
-        if (ImGui.SliderFloat("##positionIncrement4", ref unit4, 0.0f, 999.0f))
+        if (PreciseSlider.SliderFloat("##positionIncrement4", ref unit4, 0.0f, 999.0f))
         {
             CFG.Current.MapEditor_Selection_Position_Increment_4 = unit4;
         }

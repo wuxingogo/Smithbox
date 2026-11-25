@@ -353,7 +353,7 @@ public partial class NavigationTool
             GUI.WrappedText(LOC.Get("MAP_Navigation_Overlay_Off"));
 
         ImGui.SetNextItemWidth(-1);
-        if (ImGui.SliderFloat("##navigationNgpFaceOpacity", ref NgpOpacity, 5, 100, $"{LOC.Get("MAP_Navigation_Overlay_Opacity")} %.0f"))
+        if (PreciseSlider.SliderFloat("##navigationNgpFaceOpacity", ref NgpOpacity, 5, 100, $"{LOC.Get("MAP_Navigation_Overlay_Opacity")} %.0f"))
             NgpOverlayDirty = true;
         GUI.Tooltip(LOC.Get("MAP_Navigation_Overlay_Opacity_TT"));
 
@@ -558,7 +558,7 @@ public partial class NavigationTool
         GUI.SimpleHeader(LOC.Get("MAP_Navigation_Ngp_Steep_Header"), LOC.Get("MAP_Navigation_Ngp_Steep_Header_TT"));
 
         ImGui.SetNextItemWidth(-1);
-        ImGui.SliderFloat("##navigationNgpSteepSlope", ref NgpSteepSlope, 20f, 89f, $"{LOC.Get("MAP_Navigation_Ngp_Steep_Slope")} %.0f°");
+        PreciseSlider.SliderFloat("##navigationNgpSteepSlope", ref NgpSteepSlope, 20f, 89f, $"{LOC.Get("MAP_Navigation_Ngp_Steep_Slope")} %.0f°");
         GUI.Tooltip(LOC.Get("MAP_Navigation_Ngp_Steep_Slope_TT"));
 
         ImGui.Checkbox($"{LOC.Get("MAP_Navigation_Ngp_Steep_Only_Picked")}##navigationNgpSteepOnlyPicked", ref NgpSteepOnlyPicked);

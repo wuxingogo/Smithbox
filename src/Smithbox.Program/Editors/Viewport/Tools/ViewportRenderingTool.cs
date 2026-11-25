@@ -264,7 +264,7 @@ public class ViewportRenderingTool
         ImGui.Indent();
 
         DPI.ApplyInputWidth(IndentedWidth);
-        ImGui.SliderFloat($"{LOC.Get("VIEWPORT_Rendering_BTL_Radius")}##btlRadius",
+        PreciseSlider.SliderFloat($"{LOC.Get("VIEWPORT_Rendering_BTL_Radius")}##btlRadius",
             ref CFG.Current.Viewport_BTL_Light_Radius, 1.0f, 1000.0f, "%.0f m");
         GUI.Tooltip(LOC.Get("VIEWPORT_Rendering_BTL_Radius_TT"));
 
@@ -276,7 +276,7 @@ public class ViewportRenderingTool
         ImGui.EndDisabled();
 
         DPI.ApplyInputWidth();
-        ImGui.SliderInt($"{LOC.Get("VIEWPORT_Rendering_BTL_Max_Count")}##btlMaxCount",
+        PreciseSlider.SliderInt($"{LOC.Get("VIEWPORT_Rendering_BTL_Max_Count")}##btlMaxCount",
             ref CFG.Current.Viewport_BTL_Light_Max_Count, 0, SceneLightTable.Capacity);
         GUI.Tooltip(LOC.Get("VIEWPORT_Rendering_BTL_Max_Count_TT"));
 
@@ -293,7 +293,7 @@ public class ViewportRenderingTool
 
         ImGui.BeginDisabled(exposureFromMap);
         DPI.ApplyInputWidth();
-        ImGui.SliderFloat($"{LOC.Get("PREF_Viewport_Light_Intensity_Scale")}##btlIntensityScale",
+        PreciseSlider.SliderFloat($"{LOC.Get("PREF_Viewport_Light_Intensity_Scale")}##btlIntensityScale",
             ref CFG.Current.Viewport_Light_Intensity_Scale, 0.1f, 50.0f);
         ImGui.EndDisabled();
         GUI.Tooltip(exposureFromMap
@@ -305,7 +305,7 @@ public class ViewportRenderingTool
         if (RenderMode.MapLightsOnly)
         {
             DPI.ApplyInputWidth();
-            ImGui.SliderFloat($"{LOC.Get("VIEWPORT_Rendering_BTL_Base_Light")}##btlBaseLight",
+            PreciseSlider.SliderFloat($"{LOC.Get("VIEWPORT_Rendering_BTL_Base_Light")}##btlBaseLight",
                 ref CFG.Current.Viewport_Map_Lights_Only_Base_Scale, 0.0f, 1.0f);
             GUI.Tooltip(LOC.Get("VIEWPORT_Rendering_BTL_Base_Light_TT"));
         }
@@ -407,7 +407,7 @@ public class ViewportRenderingTool
         ImGui.BeginDisabled(sunFromMap);
 
         DPI.ApplyInputWidth();
-        ImGui.SliderFloat3($"{LOC.Get("VIEWPORT_Menubar_Scene_Light_Direction")}##lightDirection",
+        PreciseSlider.SliderFloat3($"{LOC.Get("VIEWPORT_Menubar_Scene_Light_Direction")}##lightDirection",
             ref CFG.Current.Viewport_Scene_Light_Direction, -1, 1);
         GUI.Tooltip(LOC.Get("VIEWPORT_Menubar_Scene_Light_Direction_TT"));
 
@@ -416,7 +416,7 @@ public class ViewportRenderingTool
         GUI.Tooltip(LOC.Get("VIEWPORT_Rendering_Sun_Color_TT"));
 
         DPI.ApplyInputWidth();
-        ImGui.SliderFloat($"{LOC.Get("VIEWPORT_Rendering_Sun_Intensity")}##sunIntensity",
+        PreciseSlider.SliderFloat($"{LOC.Get("VIEWPORT_Rendering_Sun_Intensity")}##sunIntensity",
             ref CFG.Current.Viewport_Scene_Sun_Intensity, 0, 5);
         GUI.Tooltip(LOC.Get("VIEWPORT_Rendering_Sun_Intensity_TT"));
 
@@ -426,19 +426,19 @@ public class ViewportRenderingTool
         GUI.SimpleHeader(LOC.Get("VIEWPORT_Rendering_Section_Multipliers"), LOC.Get("VIEWPORT_Rendering_Section_Multipliers_TT"));
 
         DPI.ApplyInputWidth();
-        ImGui.SliderFloat(
+        PreciseSlider.SliderFloat(
             $"{LOC.Get("VIEWPORT_Menubar_Scene_Direct_Light_Mult")}##directLightMult",
             ref CFG.Current.Viewport_Scene_Direct_Light_Mult, 0, 3);
         GUI.Tooltip(LOC.Get("VIEWPORT_Menubar_Scene_Direct_Light_Mult_TT"));
 
         DPI.ApplyInputWidth();
-        ImGui.SliderFloat(
+        PreciseSlider.SliderFloat(
             $"{LOC.Get("VIEWPORT_Menubar_Scene_Indirect_Light_Mult")}##indirectLightMult",
             ref CFG.Current.Viewport_Scene_Indirect_Light_Mult, 0, 3);
         GUI.Tooltip(LOC.Get("VIEWPORT_Menubar_Scene_Indirect_Light_Mult_TT"));
 
         DPI.ApplyInputWidth();
-        ImGui.SliderFloat(
+        PreciseSlider.SliderFloat(
             $"{LOC.Get("VIEWPORT_Menubar_Scene_Light_Brightness")}##brightness",
             ref CFG.Current.Viewport_Scene_Brightness, 0, 5);
         GUI.Tooltip(LOC.Get("VIEWPORT_Menubar_Scene_Light_Brightness_TT"));
@@ -458,11 +458,11 @@ public class ViewportRenderingTool
             ref CFG.Current.Viewport_Camera_Light_Color);
 
         DPI.ApplyInputWidth(IndentedWidth);
-        ImGui.SliderFloat($"{LOC.Get("VIEWPORT_Rendering_Camera_Light_Intensity")}##cameraLightIntensity",
+        PreciseSlider.SliderFloat($"{LOC.Get("VIEWPORT_Rendering_Camera_Light_Intensity")}##cameraLightIntensity",
             ref CFG.Current.Viewport_Camera_Light_Intensity, 0, 50);
 
         DPI.ApplyInputWidth(IndentedWidth);
-        ImGui.SliderFloat($"{LOC.Get("VIEWPORT_Rendering_Camera_Light_Range")}##cameraLightRange",
+        PreciseSlider.SliderFloat($"{LOC.Get("VIEWPORT_Rendering_Camera_Light_Range")}##cameraLightRange",
             ref CFG.Current.Viewport_Camera_Light_Range, 1, 100, "%.0f m");
 
         ImGui.Unindent();
@@ -612,7 +612,7 @@ public class ViewportRenderingTool
         GUI.Tooltip(LOC.Get("VIEWPORT_Rendering_Environment_Volume_TT"));
 
         DPI.ApplyInputWidth();
-        ImGui.SliderFloat($"{LOC.Get("VIEWPORT_Rendering_Environment_Volume_Size")}##environmentVolumeSize",
+        PreciseSlider.SliderFloat($"{LOC.Get("VIEWPORT_Rendering_Environment_Volume_Size")}##environmentVolumeSize",
             ref CFG.Current.Viewport_Environment_Volume_Size, 1.0f, 500.0f, "%.0f m");
         GUI.Tooltip(LOC.Get("VIEWPORT_Rendering_Environment_Volume_Size_TT"));
 
@@ -704,7 +704,7 @@ public class ViewportRenderingTool
             : LOC.Get("VIEWPORT_Menubar_GI_Auto_Exposure_TT", viewport.ViewPipeline.ActiveVolumeTable.AutoExposure));
 
         DPI.ApplyInputWidth();
-        ImGui.SliderFloat($"{LOC.Get("VIEWPORT_Menubar_GI_Intensity")}##giIntensity", ref CFG.Current.Viewport_GI_Intensity,
+        PreciseSlider.SliderFloat($"{LOC.Get("VIEWPORT_Menubar_GI_Intensity")}##giIntensity", ref CFG.Current.Viewport_GI_Intensity,
             0.0f, CFG.Current.Viewport_GI_Auto_Exposure || exposureFromMap ? 4.0f : 200.0f);
         GUI.Tooltip(LOC.Get("VIEWPORT_Menubar_GI_Intensity_TT"));
 
@@ -744,7 +744,7 @@ public class ViewportRenderingTool
         GUI.Tooltip(LOC.Get("VIEWPORT_Menubar_GI_Blend_Bake_TT"));
 
         DPI.ApplyInputWidth(IndentedWidth);
-        ImGui.SliderFloat($"{LOC.Get("VIEWPORT_Menubar_GI_Blend_Ratio")}##giBlendRatio", ref CFG.Current.Viewport_GI_Blend_Ratio, 0.0f, 1.0f);
+        PreciseSlider.SliderFloat($"{LOC.Get("VIEWPORT_Menubar_GI_Blend_Ratio")}##giBlendRatio", ref CFG.Current.Viewport_GI_Blend_Ratio, 0.0f, 1.0f);
         GUI.Tooltip(LOC.Get("VIEWPORT_Menubar_GI_Blend_Ratio_TT"));
 
         ImGui.Unindent();
@@ -774,12 +774,12 @@ public class ViewportRenderingTool
         GUI.Tooltip(LOC.Get("VIEWPORT_Rendering_Tone_Map_TT"));
 
         DPI.ApplyInputWidth();
-        ImGui.SliderFloat($"{LOC.Get("VIEWPORT_Rendering_Tone_Map_Exposure")}##toneMapExposure",
+        PreciseSlider.SliderFloat($"{LOC.Get("VIEWPORT_Rendering_Tone_Map_Exposure")}##toneMapExposure",
             ref CFG.Current.Viewport_ToneMap_Exposure, 0.0f, 4.0f);
         GUI.Tooltip(LOC.Get("VIEWPORT_Rendering_Tone_Map_Exposure_TT"));
 
         DPI.ApplyInputWidth();
-        ImGui.SliderFloat($"{LOC.Get("VIEWPORT_Rendering_Tone_Map_White_Point")}##toneMapWhitePoint",
+        PreciseSlider.SliderFloat($"{LOC.Get("VIEWPORT_Rendering_Tone_Map_White_Point")}##toneMapWhitePoint",
             ref CFG.Current.Viewport_ToneMap_White_Point, 0.5f, 8.0f);
         GUI.Tooltip(LOC.Get("VIEWPORT_Rendering_Tone_Map_White_Point_TT"));
     }
@@ -811,12 +811,12 @@ public class ViewportRenderingTool
         GUI.Tooltip(LOC.Get("VIEWPORT_Rendering_Shadow_Resolution_TT"));
 
         DPI.ApplyInputWidth();
-        ImGui.SliderFloat($"{LOC.Get("VIEWPORT_Rendering_Shadow_Strength")}##shadowStrength",
+        PreciseSlider.SliderFloat($"{LOC.Get("VIEWPORT_Rendering_Shadow_Strength")}##shadowStrength",
             ref CFG.Current.Viewport_Shadow_Strength, 0.0f, 1.0f);
         GUI.Tooltip(LOC.Get("VIEWPORT_Rendering_Shadow_Strength_TT"));
 
         DPI.ApplyInputWidth();
-        ImGui.SliderFloat($"{LOC.Get("VIEWPORT_Rendering_Shadow_Bias_Scale")}##shadowBiasScale",
+        PreciseSlider.SliderFloat($"{LOC.Get("VIEWPORT_Rendering_Shadow_Bias_Scale")}##shadowBiasScale",
             ref CFG.Current.Viewport_Shadow_Bias_Scale, 0.0f, 8.0f);
         GUI.Tooltip(LOC.Get("VIEWPORT_Rendering_Shadow_Bias_Scale_TT"));
 
@@ -1153,7 +1153,7 @@ public class ViewportRenderingTool
         GUI.Tooltip(LOC.Get("VIEWPORT_Menubar_Map_Lighting_Enable_TT"));
 
         DPI.ApplyInputWidth();
-        ImGui.SliderFloat($"{LOC.Get("VIEWPORT_Menubar_Map_Lighting_Exposure_Scale")}##mapLightingExposureScale",
+        PreciseSlider.SliderFloat($"{LOC.Get("VIEWPORT_Menubar_Map_Lighting_Exposure_Scale")}##mapLightingExposureScale",
             ref CFG.Current.Viewport_Map_Lighting_Exposure_Scale, 0.0f, 4.0f);
         GUI.Tooltip(LOC.Get("VIEWPORT_Menubar_Map_Lighting_Exposure_Scale_TT"));
 
@@ -1179,7 +1179,7 @@ public class ViewportRenderingTool
             ImGui.BeginDisabled(!CFG.Current.Viewport_Map_Lightmaps);
             ImGui.Indent();
             DPI.ApplyInputWidth(IndentedWidth);
-            ImGui.SliderFloat($"{LOC.Get("VIEWPORT_Menubar_Map_Lighting_Lightmap_Intensity")}##mapLightingLightmapIntensity",
+            PreciseSlider.SliderFloat($"{LOC.Get("VIEWPORT_Menubar_Map_Lighting_Lightmap_Intensity")}##mapLightingLightmapIntensity",
                 ref CFG.Current.Viewport_Map_Lightmap_Intensity, 0.0f, 32.0f, "%.2f", ImGuiSliderFlags.Logarithmic);
             GUI.Tooltip(LOC.Get("VIEWPORT_Menubar_Map_Lighting_Lightmap_Intensity_TT"));
             ImGui.Unindent();
@@ -1334,7 +1334,7 @@ public class ViewportRenderingTool
     private static void TimeOfDaySettings(ProjectEntry project, bool hasVolumes)
     {
         DPI.ApplyInputWidth();
-        ImGui.SliderFloat($"{LOC.Get("VIEWPORT_Menubar_Map_Lighting_Hours")}##mapLightingHours",
+        PreciseSlider.SliderFloat($"{LOC.Get("VIEWPORT_Menubar_Map_Lighting_Hours")}##mapLightingHours",
             ref CFG.Current.Viewport_Map_Lighting_Hours, 0.0f, 24.0f, "%.2f");
         GUI.Tooltip(LOC.Get("VIEWPORT_Menubar_Map_Lighting_Hours_TT"));
 
@@ -1546,7 +1546,7 @@ public class ViewportRenderingTool
         ImGui.Indent();
 
         DPI.ApplyInputWidth(IndentedWidth);
-        ImGui.SliderFloat($"{LOC.Get("VIEWPORT_Rendering_Post_Fog_Density_Scale")}##postFogDensityScale",
+        PreciseSlider.SliderFloat($"{LOC.Get("VIEWPORT_Rendering_Post_Fog_Density_Scale")}##postFogDensityScale",
             ref CFG.Current.Viewport_Post_Fog_Density_Scale, 0.0f, 2.0f);
         GUI.Tooltip(LOC.Get("VIEWPORT_Rendering_Post_Fog_Density_Scale_TT"));
 
@@ -1677,7 +1677,7 @@ public class ViewportRenderingTool
         ImGui.BeginDisabled(!enabled);
         ImGui.Indent();
         DPI.ApplyInputWidth(IndentedWidth);
-        ImGui.SliderFloat($"{LOC.Get(key)}##{id}", ref value, min, max);
+        PreciseSlider.SliderFloat($"{LOC.Get(key)}##{id}", ref value, min, max);
         GUI.Tooltip(LOC.Get($"{key}_TT"));
         ImGui.Unindent();
         ImGui.EndDisabled();
@@ -1879,11 +1879,11 @@ public class ViewportRenderingTool
         ImGui.BeginDisabled(!gameMode);
 
         DPI.ApplyInputWidth();
-        ImGui.SliderFloat($"{LOC.Get("VIEWPORT_Menubar_Setting_Wind_Strength")}##windStrength", ref CFG.Current.Viewport_Wind_Strength, 0.0f, 5.0f);
+        PreciseSlider.SliderFloat($"{LOC.Get("VIEWPORT_Menubar_Setting_Wind_Strength")}##windStrength", ref CFG.Current.Viewport_Wind_Strength, 0.0f, 5.0f);
         GUI.Tooltip(LOC.Get("VIEWPORT_Menubar_Setting_Wind_Strength_TT"));
 
         DPI.ApplyInputWidth();
-        ImGui.SliderFloat($"{LOC.Get("VIEWPORT_Menubar_Setting_Wind_Direction")}##windDirection", ref CFG.Current.Viewport_Wind_Direction, 0.0f, 360.0f, "%.0f deg");
+        PreciseSlider.SliderFloat($"{LOC.Get("VIEWPORT_Menubar_Setting_Wind_Direction")}##windDirection", ref CFG.Current.Viewport_Wind_Direction, 0.0f, 360.0f, "%.0f deg");
         GUI.Tooltip(LOC.Get("VIEWPORT_Menubar_Setting_Wind_Direction_TT"));
 
         ImGui.EndDisabled();
@@ -1892,18 +1892,18 @@ public class ViewportRenderingTool
         GUI.SimpleHeader(LOC.Get("VIEWPORT_Rendering_Section_Display"), LOC.Get("VIEWPORT_Rendering_Section_Display_TT"));
 
         DPI.ApplyInputWidth();
-        ImGui.SliderFloat($"{LOC.Get("VIEWPORT_Rendering_Grass_Density")}##grassDensity", ref GrassDensity, 0.1f, 4f);
+        PreciseSlider.SliderFloat($"{LOC.Get("VIEWPORT_Rendering_Grass_Density")}##grassDensity", ref GrassDensity, 0.1f, 4f);
         GUI.Tooltip(LOC.Get("VIEWPORT_Rendering_Grass_Density_TT"));
 
         // Each change rebuilds the grass, so it waits for the slider to be let go
-        if (ImGui.IsItemDeactivatedAfterEdit())
+        if (PreciseSlider.IsCommitted())
         {
             CFG.Current.MapEditor_Grass_Density = GrassDensity;
         }
 
         // Applies at once, as the collision shaders read it every frame
         DPI.ApplyInputWidth();
-        ImGui.SliderFloat($"{LOC.Get("PREF_Viewport_Collision_Opacity")}##collisionOpacity",
+        PreciseSlider.SliderFloat($"{LOC.Get("PREF_Viewport_Collision_Opacity")}##collisionOpacity",
             ref CFG.Current.Viewport_Collision_Opacity, 0.0f, 1.0f);
         GUI.Tooltip(LOC.Get("PREF_Viewport_Collision_Opacity_TT"));
     }

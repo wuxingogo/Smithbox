@@ -39,7 +39,7 @@ public class ModelPreviewBrowser
     public void DisplayOptions()
     {
         ImGui.SetNextItemWidth(100f * DPI.UIScale());
-        ImGui.SliderInt($"{LOC.Get("EDITOR_ModelPreview_Size")}##modelPreviewSize",
+        PreciseSlider.SliderInt($"{LOC.Get("EDITOR_ModelPreview_Size")}##modelPreviewSize",
             ref CFG.Current.Interface_Model_Preview_Size, MinPreviewSize, MaxPreviewSize);
         GUI.Tooltip(LOC.Get("EDITOR_ModelPreview_Size_TT"));
 

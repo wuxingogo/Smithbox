@@ -190,7 +190,7 @@ public partial class NavigationTool
         GUI.SimpleHeader(LOC.Get("MAP_Navigation_Edit_Cursor_Opacity_Header"), LOC.Get("MAP_Navigation_Edit_Cursor_Opacity_Header_TT"));
 
         ImGui.SetNextItemWidth(-1);
-        ImGui.SliderFloat("##navigationEditCursorOpacity", ref VertexCursorOpacity, 0f, 100f, "%.0f%%");
+        PreciseSlider.SliderFloat("##navigationEditCursorOpacity", ref VertexCursorOpacity, 0f, 100f, "%.0f%%");
         GUI.Tooltip(LOC.Get("MAP_Navigation_Edit_Cursor_Opacity_Input_TT"));
 
         // Controls
@@ -271,7 +271,7 @@ public partial class NavigationTool
             var percent = VertexSmoothStrength * 100f;
 
             ImGui.SetNextItemWidth(-1);
-            if (ImGui.SliderFloat("##navigationEditSmoothStrength", ref percent, 1f, 100f, "%.0f%%"))
+            if (PreciseSlider.SliderFloat("##navigationEditSmoothStrength", ref percent, 1f, 100f, "%.0f%%"))
                 VertexSmoothStrength = Math.Clamp(percent / 100f, 0.01f, 1f);
             GUI.Tooltip(LOC.Get("MAP_Navigation_Edit_Smooth_Strength_Input_TT"));
         }

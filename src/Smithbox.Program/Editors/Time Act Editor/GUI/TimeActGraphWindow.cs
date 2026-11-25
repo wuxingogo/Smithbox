@@ -330,7 +330,7 @@ public class TimeActGraphWindow
 
         ImGui.SameLine();
         ImGui.SetNextItemWidth(120 * DPI.UIScale());
-        ImGui.SliderFloat("##graphSpeed", ref playback.Speed, 0.05f, 2f, LOC.Get("TAE_GraphWindow_Speed"));
+        StudioCore.Application.PreciseSlider.SliderFloat("##graphSpeed", ref playback.Speed, 0.05f, 2f, LOC.Get("TAE_GraphWindow_Speed"));
 
         // A slow-down from an event would otherwise look like the editor lagging
         if (playback.Simulation.SpeedEvent is { } speedEvent)

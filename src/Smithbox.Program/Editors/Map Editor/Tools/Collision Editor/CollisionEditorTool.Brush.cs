@@ -120,7 +120,7 @@ public partial class CollisionEditorTool
             var percent = CFG.Current.MapEditor_CollisionEditor_Smooth_Strength * 100f;
 
             ImGui.SetNextItemWidth(-1);
-            if (ImGui.SliderFloat("##collisionEditorSmoothStrength", ref percent, 1f, 100f, "%.0f%%"))
+            if (PreciseSlider.SliderFloat("##collisionEditorSmoothStrength", ref percent, 1f, 100f, "%.0f%%"))
                 CFG.Current.MapEditor_CollisionEditor_Smooth_Strength = Math.Clamp(percent / 100f, 0.01f, 1f);
             GUI.Tooltip(LOC.Get("MAP_CollisionEditor_Smooth_Strength_Input_TT"));
         }

@@ -241,7 +241,7 @@ public class MapInfoEditor
         if (Tool == PaintTool.Brush)
         {
             ImGui.SetNextItemWidth(-1);
-            ImGui.SliderInt("##mapInfoBrushSize", ref CFG.Current.MapInfo_BrushSize, 1, 64,
+            PreciseSlider.SliderInt("##mapInfoBrushSize", ref CFG.Current.MapInfo_BrushSize, 1, 64,
                 LOC.Get("MAP_MapInfo_Brush_Size_Format", CFG.Current.MapInfo_BrushSize, CFG.Current.MapInfo_BrushSize * 4));
             GUI.Tooltip(LOC.Get("MAP_MapInfo_Brush_Size_TT"));
         }
@@ -257,7 +257,7 @@ public class MapInfoEditor
         GUI.SimpleHeader(LOC.Get("MAP_MapInfo_Display_Header"), LOC.Get("MAP_MapInfo_Display_Header_TT"));
 
         ImGui.SetNextItemWidth(-1);
-        if (ImGui.SliderFloat("##mapInfoOpacity", ref CFG.Current.MapInfo_Opacity, 0.05f, 1.0f, LOC.Get("MAP_MapInfo_Opacity_Format")))
+        if (PreciseSlider.SliderFloat("##mapInfoOpacity", ref CFG.Current.MapInfo_Opacity, 0.05f, 1.0f, LOC.Get("MAP_MapInfo_Opacity_Format")))
             LutVersion++;
         GUI.Tooltip(LOC.Get("MAP_MapInfo_Opacity_TT"));
 

@@ -763,13 +763,13 @@ public class DisplayGroupTool
     private void DisplayNearbyActions()
     {
         ImGui.SetNextItemWidth(-1);
-        ImGui.SliderInt($"##displayGroupsNearbyCount", ref _nearbyCount, 1, 32,
+        PreciseSlider.SliderInt($"##displayGroupsNearbyCount", ref _nearbyCount, 1, 32,
             string.Format(LOC.Get("MAP_DisplayGroups_Nearby_Count"), "%d"));
         GUI.Tooltip(LOC.Get("MAP_DisplayGroups_Nearby_Count_TT"));
 
         var agreementPercent = (int)MathF.Round(_nearbyAgreement * 100);
         ImGui.SetNextItemWidth(-1);
-        if (ImGui.SliderInt($"##displayGroupsNearbyAgreement", ref agreementPercent, 10, 100,
+        if (PreciseSlider.SliderInt($"##displayGroupsNearbyAgreement", ref agreementPercent, 10, 100,
             string.Format(LOC.Get("MAP_DisplayGroups_Nearby_Agreement"), "%d%%")))
         {
             _nearbyAgreement = agreementPercent / 100.0f;

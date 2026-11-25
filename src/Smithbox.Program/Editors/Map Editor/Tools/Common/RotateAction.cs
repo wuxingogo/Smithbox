@@ -299,7 +299,7 @@ public class RotateAction
         GUI.SetInputWidth();
 
         var rot0 = CFG.Current.Toolbar_Rotate_Increment_0;
-        if (ImGui.SliderFloat("##degreeIncrement0", ref rot0, -360.0f, 360.0f))
+        if (PreciseSlider.SliderFloat("##degreeIncrement0", ref rot0, -360.0f, 360.0f))
         {
             CFG.Current.Toolbar_Rotate_Increment_0 = Math.Clamp(rot0, -360.0f, 360.0f);
         }
@@ -311,7 +311,7 @@ public class RotateAction
         GUI.SetInputWidth();
 
         var rot1 = CFG.Current.Toolbar_Rotate_Increment_1;
-        if (ImGui.SliderFloat("##degreeIncrement1", ref rot1, -360.0f, 360.0f))
+        if (PreciseSlider.SliderFloat("##degreeIncrement1", ref rot1, -360.0f, 360.0f))
         {
             CFG.Current.Toolbar_Rotate_Increment_1 = Math.Clamp(rot1, -360.0f, 360.0f);
         }
@@ -323,7 +323,7 @@ public class RotateAction
         GUI.SetInputWidth();
 
         var rot2 = CFG.Current.Toolbar_Rotate_Increment_2;
-        if (ImGui.SliderFloat("##degreeIncrement2", ref rot2, -360.0f, 360.0f))
+        if (PreciseSlider.SliderFloat("##degreeIncrement2", ref rot2, -360.0f, 360.0f))
         {
             CFG.Current.Toolbar_Rotate_Increment_2 = Math.Clamp(rot2, -360.0f, 360.0f);
         }
@@ -335,7 +335,7 @@ public class RotateAction
         GUI.SetInputWidth();
 
         var rot3 = CFG.Current.Toolbar_Rotate_Increment_3;
-        if (ImGui.SliderFloat("##degreeIncrement3", ref rot3, -360.0f, 360.0f))
+        if (PreciseSlider.SliderFloat("##degreeIncrement3", ref rot3, -360.0f, 360.0f))
         {
             CFG.Current.Toolbar_Rotate_Increment_3 = Math.Clamp(rot3, -360.0f, 360.0f);
         }
@@ -347,7 +347,7 @@ public class RotateAction
         GUI.SetInputWidth();
 
         var rot4 = CFG.Current.Toolbar_Rotate_Increment_4;
-        if (ImGui.SliderFloat("##degreeIncrement4", ref rot4, -360.0f, 360.0f))
+        if (PreciseSlider.SliderFloat("##degreeIncrement4", ref rot4, -360.0f, 360.0f))
         {
             CFG.Current.Toolbar_Rotate_Increment_4 = Math.Clamp(rot4, -360.0f, 360.0f);
         }

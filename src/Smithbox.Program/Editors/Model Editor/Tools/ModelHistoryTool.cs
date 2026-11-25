@@ -265,7 +265,7 @@ public class ModelHistoryTool
         var limit = CFG.Current.ModelEditor_History_Parked_Limit;
 
         ImGui.SetNextItemWidth(-1);
-        if (ImGui.SliderInt("##modelHistoryKeptLimit", ref limit, 0, 16))
+        if (PreciseSlider.SliderInt("##modelHistoryKeptLimit", ref limit, 0, 16))
         {
             CFG.Current.ModelEditor_History_Parked_Limit = limit;
         }

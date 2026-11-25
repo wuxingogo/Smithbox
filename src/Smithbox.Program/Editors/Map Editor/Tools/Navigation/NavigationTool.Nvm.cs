@@ -335,7 +335,7 @@ public partial class NavigationTool
             GUI.WrappedText(LOC.Get("MAP_Navigation_Overlay_Off"));
 
         ImGui.SetNextItemWidth(-1);
-        if (ImGui.SliderFloat("##navigationNvmFaceOpacity", ref NvmOpacity, 5, 100, $"{LOC.Get("MAP_Navigation_Overlay_Opacity")} %.0f"))
+        if (PreciseSlider.SliderFloat("##navigationNvmFaceOpacity", ref NvmOpacity, 5, 100, $"{LOC.Get("MAP_Navigation_Overlay_Opacity")} %.0f"))
             NvmOverlayDirty = true;
         GUI.Tooltip(LOC.Get("MAP_Navigation_Overlay_Opacity_TT"));
 

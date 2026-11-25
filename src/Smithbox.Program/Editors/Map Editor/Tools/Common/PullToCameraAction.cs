@@ -75,7 +75,7 @@ public class PullToCameraAction
         GUI.SimpleHeader("Camera Offset Distance", "Camera Offset Distance", "", UI.Current.ImGui_Default_Text_Color);
 
         GUI.SetInputWidth();
-        if (ImGui.SliderFloat("##Offset distance", ref CFG.Current.Toolbar_Move_to_Camera_Offset, 0, 100))
+        if (PreciseSlider.SliderFloat("##Offset distance", ref CFG.Current.Toolbar_Move_to_Camera_Offset, 0, 100))
         {
             if (CFG.Current.Toolbar_Move_to_Camera_Offset < 0)
                 CFG.Current.Toolbar_Move_to_Camera_Offset = 0;

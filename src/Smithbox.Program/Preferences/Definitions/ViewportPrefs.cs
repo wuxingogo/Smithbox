@@ -35,7 +35,7 @@ public class ViewportPrefs
             Draw = () =>
             {
                 DPI.ApplyInputWidth();
-                if (ImGui.SliderFloat("##inputValue", ref CFG.Current.Viewport_Frame_Rate, 20.0f, 240.0f))
+                if (PreciseSlider.SliderFloat("##inputValue", ref CFG.Current.Viewport_Frame_Rate, 20.0f, 240.0f))
                 {
                     CFG.Current.Viewport_Frame_Rate = (float)Math.Round(CFG.Current.Viewport_Frame_Rate);
                 }
@@ -514,7 +514,7 @@ public class ViewportPrefs
             Draw = () =>
             {
                 DPI.ApplyInputWidth();
-                ImGui.SliderFloat("##inputValue", ref CFG.Current.Viewport_Wireframe_Color_Variance, 0.0f, 1.0f);
+                PreciseSlider.SliderFloat("##inputValue", ref CFG.Current.Viewport_Wireframe_Color_Variance, 0.0f, 1.0f);
             }
         };
     }
@@ -705,7 +705,7 @@ public class ViewportPrefs
                 }
 
                 DPI.ApplyInputWidth();
-                ImGui.SliderFloat(
+                PreciseSlider.SliderFloat(
                     $"{LOC.Get("PREF_Viewport_Collision_Opacity")}##Viewport_Collision_Opacity",
                     ref CFG.Current.Viewport_Collision_Opacity, 0.0f, 1.0f);
                 GUI.Tooltip(LOC.Get("PREF_Viewport_Collision_Opacity_TT"));
