@@ -49,10 +49,12 @@ public class DrawParamLightingBank
     }
 
     public GparamProfile Profile => GparamProfile.For(Project.Descriptor.ProjectType);
+    private bool IsRemastered => Project.Descriptor.ProjectType == ProjectType.DS1R;
+    private const string FirelinkMap = "m10_02_00_00";
 
     public bool CanUse()
     {
-        return Profile.DrawParamLighting && Project.Handler.ParamData?.PrimaryBank?.Params != null;
+        return (Profile.DrawParamLighting || IsRemastered) && Project.Handler.ParamData?.PrimaryBank?.Params != null;
     }
 
     /// <summary>The area prefix of a map's DrawParam params: m01 for m01_00_00_00</summary>
@@ -152,14 +154,16 @@ public class DrawParamLightingBank
         if (MostUsed.TryGetValue(map.Name, out var cached) && now - cached.Time < 1000)
             return cached.Rows;
 
-        var pieces = map.Parts
-            .Select(e => e.WrappedObject)
-            .OfType<MSBD.Part.MapPiece>()
-            .ToList();
+        var pieces = map.Parts.Select(e => e.WrappedObject).ToList();
 
-        int MostUsedId(string bank) => pieces.Count == 0
-            ? 0
-            : pieces.GroupBy(p => GetPartRow(p, bank)).OrderByDescending(g => g.Count()).ThenBy(g => g.Key).First().Key;
+        int MostUsedId(string bank)
+        {
+            var ids = IsRemastered
+                ? pieces.OfType<MSB1.Part.MapPiece>().Select(p => GetRemasteredPartRow(p, bank))
+                : pieces.OfType<MSBD.Part.MapPiece>().Select(p => GetPartRow(p, bank));
+            return ids.GroupBy(id => id).OrderByDescending(g => g.Count()).ThenBy(g => g.Key)
+                .Select(g => g.Key).FirstOrDefault();
+        }
 
         var rows = new DrawParamRows(MostUsedId(LightBank), MostUsedId(ToneMapBank), MostUsedId(ShadowBank),
             MostUsedId(ToneCorrectBank), MostUsedId(FogBank));
@@ -208,9 +212,19 @@ public class DrawParamLightingBank
     public MapContainer GetLitMap(IEnumerable<MapContainer> maps)
     {
         return maps
+            .Where(m => !IsRemastered || string.Equals(m.Name, FirelinkMap, StringComparison.OrdinalIgnoreCase))
             .OrderBy(m => m.Name, StringComparer.OrdinalIgnoreCase)
             .FirstOrDefault(m => GetBank(m.Name, LightBank) != null);
     }
+
+    private static int GetRemasteredPartRow(MSB1.Part part, string bank) => bank switch
+    {
+        ToneMapBank => part.ToneMapID,
+        ShadowBank => part.ShadowID,
+        ToneCorrectBank => part.ToneCorrectID,
+        FogBank => part.FogID,
+        _ => part.LightID
+    };
 
     /// <summary>The lighting of one map with the rows <see cref="ChooseRows" /> picks, cached as <see cref="ResolveForViewport" /> describes</summary>
     public GparamLighting ResolveCached(MapContainer map)
@@ -271,6 +285,9 @@ public class DrawParamLightingBank
 
         foreach (var map in maps)
         {
+            if (IsRemastered && map != litMap)
+                continue;
+
             var area = GetArea(map.Name);
             var lightBank = GetBank(map.Name, LightBank);
 
@@ -281,10 +298,17 @@ public class DrawParamLightingBank
 
             foreach (var entity in map.Parts)
             {
-                if (entity.WrappedObject is not MSBD.Part part || entity.RenderSceneMesh is not MeshRenderableProxy proxy)
+                if (entity.RenderSceneMesh is not MeshRenderableProxy proxy)
                     continue;
 
-                var lightId = GetPartLightId(part, collisions);
+                var lightId = entity.WrappedObject switch
+                {
+                    MSBD.Part part => GetPartLightId(part, collisions),
+                    MSB1.Part part when IsRemastered => GetRemasteredPartRow(part, LightBank),
+                    _ => -1
+                };
+                if (lightId < 0)
+                    continue;
                 var key = (area, lightId);
                 var row = lightBank[lightId];
                 byte set = 0;

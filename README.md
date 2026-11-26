@@ -7,6 +7,13 @@ Smithbox is a modding tool for Elden Ring, Elden Ring: Nightreign, Armored Core 
 
 ## 本分支修改
 
+- **DS3 祭祀场 Game 预览**：在 Map Editor 选中已加载的祭祀场（`m40_00_00_00`）时，Game 视口读取该地图的 GPARAM、间接光探针和 DOL 光照贴图，并在同一视口渲染流水。
+
+- **祭祀场 Game 预览**：DS1R 的 Map Editor 使用祭祀场地图片段的 DrawParam 光照行及区域环境立方贴图，供同一 Game 视口中的地图和流水预览使用。
+- **DS3-Remake 导入祭祀场**：在 Map Editor 的 Game 视口选中已加载的 `m10_02_00_00` 时，读取该地图自己的 GPARAM 和 BTPB 间接光探针。
+
+- **DS3 材质动画预览**：地图快速加载和完整 FLVER 加载均读取 GX20 的第一层贴图滚动与 GX07/104 的三层水面法线速度。水面使用三套原生 UV，加法无光照继续由 MTD 的混合模式决定。
+
 - **滑动条精确输入**：右键单击滑动条可输入准确数值，点击「应用」后生效。FaceGen 保留原有右键菜单，并在其中提供精确输入。
 
 - **地图模型跳转**：`Go to Model` 按游戏的资源命名规则定位地图模型，支持 DS1／DS1R 的区域后缀。找不到模型容器或条目时，日志会显示查找失败的名称。

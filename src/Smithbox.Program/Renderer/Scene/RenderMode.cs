@@ -1,4 +1,5 @@
 using StudioCore.Application;
+using StudioCore.Editors.MapEditor;
 
 namespace StudioCore.Renderer;
 
@@ -41,7 +42,24 @@ public static class RenderMode
     ///     (<see cref="GparamProfile.MapLightsOnly" />). The pipelines it applies to say so in
     ///     <see cref="SceneRenderPipeline.MapLightsOnly" />.
     /// </summary>
-    public static bool MapLightsOnly => IsGame && GparamProfile.Current.MapLightsOnly;
+    public static bool MapLightsOnly => IsGame && GparamProfile.Current.MapLightsOnly && FirelinkPreviewMap == null;
+
+    /// <summary>The loaded DS3 Firelink map selected in the active Map Editor view.</summary>
+    public static MapContainer FirelinkPreviewMap
+    {
+        get
+        {
+            var project = Smithbox.Orchestrator?.SelectedProject;
+            if (!IsGame || project?.Descriptor.ProjectType != ProjectType.DS3)
+                return null;
+
+            var map = project.Handler?.MapEditor?.ViewHandler.ActiveView?.Selection.SelectedMapContainer;
+            // DS3-Remake ports the DS1 shrine into a DS3 project with its own GPARAM and probes.
+            return map is { Name: "m40_00_00_00" or "m10_02_00_00", LoadState: MapContentLoadState.Loaded }
+                ? map
+                : null;
+        }
+    }
 
     public static ViewportTexturingMode Texturing => (ViewportTexturingMode)CFG.Current.Viewport_Texturing_Mode;
 

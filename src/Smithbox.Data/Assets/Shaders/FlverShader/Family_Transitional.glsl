@@ -19,7 +19,16 @@ void Transitional_BakedAmbient(Surface s, inout vec3 ambientDiffuse)
 bool Transitional_IndirectLight(Surface s, vec3 ambientDiffuse, out vec3 light)
 {
 	light = vec3(0.0);
-	return false;
+	if (c_gameID != GAME_DS1_REMASTER || !g_envLit)
+		return false;
+
+	vec3 envDiffuse;
+	vec3 envSpecular;
+	EnvLight(s.N, reflect(-s.V, s.N), envDiffuse, envSpecular);
+	g_indirectDiffuse = s.diffuse * (ambientDiffuse + envDiffuse * sceneparam.ambientLightMult);
+	g_indirectSpecular = s.F0 * envSpecular * sceneparam.ambientLightMult;
+	light = g_indirectDiffuse + g_indirectSpecular;
+	return true;
 }
 
 void Transitional_Albedo(inout vec4 diffuseColor)

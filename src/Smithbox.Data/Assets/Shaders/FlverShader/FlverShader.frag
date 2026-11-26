@@ -367,7 +367,7 @@ struct waterVolumeData
 {
 	vec4 scatter;    // rgb: scattering, w: what depth is multiplied by to fade in at the shore
 	vec4 absorption; // rgb: absorption
-	vec4 unused;
+	vec4 thirdNormal; // xy: UV movement of the third DS3 normal, z: whether it is enabled
 };
 
 layout(set = 4, binding = 0, std140) buffer materialWaterDetail
@@ -1686,13 +1686,12 @@ bool ModelLit()
 // Material.EnvLightingFlag and the bits above it, in the first UV set's value
 #define MATERIAL_ENV_LIT 0x200u
 
-// Whether the material is a Demon's Souls map material (its MTD's g_LightingType 3) and its lighting set has env
-// cubemaps: then it is lit as the game's HemEnv shaders light it, by the hemisphere and the cubemaps, without the sun.
-// The cubemaps are in the draw's lighting set (SceneLighting.glsl); envDiffuseScale.w is 0 in every other game.
+// HemEnv materials use the cubemaps supplied by their DrawParam lighting set.
 bool EnvLit()
 {
 	return MapLighting() && (MaterialValue(ROW_UVSET, 0) & MATERIAL_ENV_LIT) != 0u &&
-		LIGHTING.envDiffuseScale.w > 0.5;
+		LIGHTING.envDiffuseScale.w > 0.5 &&
+		(c_gameID != GAME_DS1_REMASTER || LIGHTING.envTextures.x != 0xFFFFFFFFu);
 }
 
 // A cube pool texture by its index, sampled at direction D in the game's space, as the env maps of the other games
@@ -2135,6 +2134,18 @@ vec2 WaterRipples(float height)
 		sampler2D(globalTextures[nonuniformEXT(TextureIndex(MaterialValue(ROW_NORMAL, 1)))], anisoLinearSampler),
 		uv, g_dx[0] * water.tiling.xy, g_dy[0] * water.tiling.xy).xy;
 
+#ifdef MATERIAL_UV3
+	vec4 third = watervolumedata[g_mat + 12u].thirdNormal;
+	if (third.z > 0.5)
+	{
+		vec2 detail = SampleAt(MaterialValue(ROW_NORMAL, 1), 1, water.tiling.xy, water.tiling.zw).xy;
+		vec2 uv3 = fsin_texcoord3 + (HasFeature(FEATURE_UV_SCROLL) ? third.xy * sceneparam.materialTime : vec2(0.0));
+		vec2 fine = textureGrad(
+			sampler2D(globalTextures[nonuniformEXT(TextureIndex(MaterialValue(ROW_NORMAL, 2)))], anisoLinearSampler),
+			uv3, dFdx(fsin_texcoord3), dFdy(fsin_texcoord3)).xy;
+		return (detail - 0.5) + (fine - 0.5);
+	}
+#endif
 	return (ripple - 0.5) * water.bend.z;
 }
 

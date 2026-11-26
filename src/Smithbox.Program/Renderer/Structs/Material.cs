@@ -1,4 +1,4 @@
-﻿using System.Numerics;
+using System.Numerics;
 using System.Runtime.InteropServices;
 
 namespace StudioCore.Renderer;
@@ -575,8 +575,8 @@ public struct MaterialWater
     /// <summary>rgb is the absorption, w is unused</summary>
     public Vector4 Absorption;
 
-    /// <summary>Unused, to fill out the second entry</summary>
-    public Vector4 Pad;
+    /// <summary>xy is the third normal's scroll, z enables the DS3 three-normal path</summary>
+    public Vector4 ThirdNormal;
 }
 
 /// <summary>

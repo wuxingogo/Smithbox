@@ -374,7 +374,7 @@ public class GparamLightingBank
     /// menu chose. Null if map lighting is off or no loaded map has a GPARAM. Only resolved again when one of those
     /// changes.
     /// </summary>
-    public GparamLighting ResolveForViewport(IEnumerable<MapContainer> maps)
+    public GparamLighting ResolveForViewport(IEnumerable<MapContainer> maps, bool useMapFile = false)
     {
         if (!CanUse() || !CFG.Current.Viewport_Map_Lighting)
             return null;
@@ -386,7 +386,7 @@ public class GparamLightingBank
             .FirstOrDefault(m => files.Any(e => e.Filename.Equals(GetDefaultFile(m.Name), StringComparison.OrdinalIgnoreCase)));
 
         // A map without a GPARAM of its own (e.g. a new map number) is lit with the chosen file, if the project has it
-        var chosen = CFG.Current.Viewport_Map_Lighting_File;
+        var chosen = useMapFile ? null : CFG.Current.Viewport_Map_Lighting_File;
 
         if (map == null && !string.IsNullOrEmpty(chosen) && HasFile(chosen))
             map = maps.OrderBy(m => m.Name, StringComparer.OrdinalIgnoreCase).FirstOrDefault();
@@ -394,7 +394,7 @@ public class GparamLightingBank
         if (map == null)
             return null;
 
-        return ResolveCached(map.Name, CFG.Current.Viewport_Map_Lighting_File);
+        return ResolveCached(map.Name, chosen);
     }
 
     /// <summary>

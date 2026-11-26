@@ -651,18 +651,22 @@ public class MapEditorScreen : EditorScreen
         // mode; its first frame back rebuilds it before anything is drawn. Nor with Game mode reduced to the map's
         // lights (GparamProfile.MapLightsOnly), which reads none either.
         var mapLightsOnly = RenderMode.MapLightsOnly;
+        var firelink = RenderMode.FirelinkPreviewMap;
+        var lightingMaps = firelink != null ? new[] { firelink } : (IReadOnlyList<MapContainer>)loadedMaps;
+
+        // Resolve lighting before the probe table so the probes use this frame's GPARAM scale.
+        SceneRenderer.MapLighting = activeView.DrawParamLightingBank.CanUse()
+            ? activeView.DrawParamLightingBank.ResolveForViewport(lightingMaps)
+            : firelink != null
+                ? activeView.GparamLightingBank.ResolveForViewport(lightingMaps, useMapFile: true)
+                : activeView.GparamLightingBank.ResolveForViewport(lightingMaps);
 
         if (RenderMode.IsGame && !mapLightsOnly)
         {
-            var (bake, blendBake, blendRatio) = activeView.IrradianceVolumeBank.ResolveBakes(loadedMaps);
+            var (bake, blendBake, blendRatio) = activeView.IrradianceVolumeBank.ResolveBakes(lightingMaps);
 
-            activeView.IrradianceVolumeBank.UpdateGpuTable(loadedMaps, bake, blendBake, blendRatio);
+            activeView.IrradianceVolumeBank.UpdateGpuTable(lightingMaps, bake, blendBake, blendRatio);
         }
-
-        // The sun and exposure of the loaded maps' GPARAMs, shared by all views; for Demon's Souls, of their DrawParam
-        SceneRenderer.MapLighting = activeView.DrawParamLightingBank.CanUse()
-            ? activeView.DrawParamLightingBank.ResolveForViewport(loadedMaps)
-            : activeView.GparamLightingBank.ResolveForViewport(loadedMaps);
 
         // Demon's Souls' parts lit by the LightBank rows of their own LightIDs, as lighting sets 1 onwards of each view
         // (SceneRenderPipeline.SceneLightingBuffer), named by each part's instance (InstanceData.LightingSet)
@@ -673,7 +677,7 @@ public class MapEditorScreen : EditorScreen
         // DS3's lightmaps of the map pieces, with the lighting's Dominant Light Map values. The shader reads a piece's
         // lightmap whatever the lighting, so with Game mode reduced to the map's lights the pieces let theirs go.
         activeView.Project.Handler.MapData.DolLightmapBank?.Update(
-            mapLightsOnly ? Array.Empty<MapContainer>() : loadedMaps, SceneRenderer.MapLighting);
+            mapLightsOnly ? Array.Empty<MapContainer>() : lightingMaps, SceneRenderer.MapLighting);
 
         // The fog volumes follow the same GPARAM file, weather and time of day
         activeView.FogVolumeBank.Update(loadedMaps);

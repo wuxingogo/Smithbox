@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using SoulsFormats;
 using SoulsFormats.Utilities;
+using StudioCore.Application;
 using StudioCore.Developer;
 using StudioCore.Editors.Common;
 using StudioCore.Editors.MapEditor;
@@ -554,7 +555,7 @@ public class FlverResource : IResource, IDisposable
         string FlverPathIfUnnamed(string type) =>
             dest.Definition?.Samplers.Find(x => x.Type == type) is { Path: "" } ? flverPaths.GetValueOrDefault(type, "") : "";
 
-        if (dest.Definition?.SurfaceType != null)
+        if (dest.Definition?.SurfaceType != null && dest.Ds3WaterScroll is null)
         {
             LookupTexture(dest.Definition.Surface == MaterialSurface.Water
                 ? FlverMaterial.TextureType.NormalTextureResource
@@ -597,7 +598,15 @@ public class FlverResource : IResource, IDisposable
             layers.LayerCount = 2;
         }
 
-        if (dest.Definition?.Water?.DetailType is { } waterDetail)
+        if (dest.Ds3WaterScroll is not null)
+        {
+            for (var i = 0; i < Ds3WaterNormals.Length; i++)
+            {
+                var type = Ds3WaterNormals[i];
+                LookupTexture(NormalLayers[i], dest, type, FlverPathIfUnnamed(type), mtd);
+            }
+        }
+        else if (dest.Definition?.Water?.DetailType is { } waterDetail)
         {
             LookupTexture(FlverMaterial.TextureType.NormalTextureResource2, dest, waterDetail, FlverPathIfUnnamed(waterDetail), mtd);
         }
@@ -999,7 +1008,14 @@ public class FlverResource : IResource, IDisposable
         dest.UsesLightmap |= dest.Definition?.Samplers.Exists(s =>
             s.Type != null && s.Type.Contains("DOLTexture", StringComparison.OrdinalIgnoreCase)) == true;
 
-        if (deformer != MaterialDeformer.None || knownBlend)
+        if (dest.Ds3WaterScroll is not null)
+        {
+            // Three independent normal UVs and one surface color layer.
+            dest.ShaderName = @"FlverShader\FlverShader_blend_uv3";
+            dest.LayoutType = MeshLayoutType.LayoutUV3;
+            layers.LayerCount = 1;
+        }
+        else if (deformer != MaterialDeformer.None || knownBlend)
         {
             dest.ShaderName = layers.IsBlended ? @"FlverShader\FlverShader_deform_blend" : @"FlverShader\FlverShader_deform";
             dest.LayoutType = MeshLayoutType.LayoutDeform;
@@ -1082,7 +1098,7 @@ public class FlverResource : IResource, IDisposable
             specConstants.Add(new SpecializationConstant(5, knownBlend && !hasRecipe));
             specConstants.Add(new SpecializationConstant(7, hasRecipe));
         }
-        else if (dest.ShaderName == @"FlverShader\FlverShader_blend")
+        else if (dest.Ds3WaterScroll is not null || dest.ShaderName == @"FlverShader\FlverShader_blend")
         {
             // A lightmapped material drawn with the blend variant: one layer, which then takes all the weight
             specConstants.Add(new SpecializationConstant(4, 1u));
@@ -1197,6 +1213,23 @@ public class FlverResource : IResource, IDisposable
         if (hasWater)
         {
             dest.ApplyWater(dest.Definition!.Water!);
+        }
+
+        // These are FLVER overrides, applied after the shared MTD's sampler defaults.
+        if (dest.Ds3AlbedoScroll is Vector2 albedoScroll)
+        {
+            dest.Effects.Scroll.X = albedoScroll.X;
+            dest.Effects.Scroll.Y = albedoScroll.Y;
+        }
+
+        if (dest.Ds3WaterScroll is { } flow && dest.Water is { } water)
+        {
+            dest.Effects.Scroll.Z = flow.First.X;
+            dest.Effects.Scroll.W = flow.First.Y;
+            water.DetailTiling = new Vector4(1, 1, flow.Second.X, flow.Second.Y);
+            water.DetailBend = new Vector4(0, 0, 1, water.DetailBend.W);
+            water.ThirdNormal = new Vector4(flow.Third.X, flow.Third.Y, 1, 0);
+            dest.Water = water;
         }
 
         if (dest.Definition?.Snow is { } snow)
@@ -1652,6 +1685,79 @@ public class FlverResource : IResource, IDisposable
         return float.IsFinite(value) ? value : 1f;
     }
 
+    private static readonly string[] Ds3WaterNormals = ["g_BumpmapTexture", "g_BumpmapTexture2", "g_BumpmapTexture3"];
+
+    public readonly record struct Ds3WaterFlow(Vector2 First, Vector2 Second, Vector2 Third);
+
+    private static void ApplyDs3GxScroll(FlverMaterial dest, string id, int variant, byte[] data, bool bigEndian)
+    {
+        Vector2 ReadPair(int word)
+        {
+            float Read(int offset) => bigEndian
+                ? System.Buffers.Binary.BinaryPrimitives.ReadSingleBigEndian(data.AsSpan(offset, 4))
+                : System.Buffers.Binary.BinaryPrimitives.ReadSingleLittleEndian(data.AsSpan(offset, 4));
+            return new Vector2(Read(word * 4), Read((word + 1) * 4));
+        }
+
+        static bool IsFinite(Vector2 value) => float.IsFinite(value.X) && float.IsFinite(value.Y);
+
+        if (id == "GX20" && variant == 100 && data.Length == 12)
+        {
+            var scroll = ReadPair(0);
+            if (IsFinite(scroll))
+                dest.Ds3AlbedoScroll = scroll;
+        }
+        else if (id == "GX07" && variant == 104 && data.Length >= 88 &&
+                 dest.Definition is { Water: not null, ShaderName: "GXFlver_WaterBumpTri" } definition &&
+                 Ds3WaterNormals.All(type => definition.Samplers.Exists(s => s.Type == type)))
+        {
+            var first = ReadPair(0);
+            var second = ReadPair(2);
+            var third = ReadPair(20);
+            if (IsFinite(first) && IsFinite(second) && IsFinite(third))
+                dest.Ds3WaterScroll = new Ds3WaterFlow(first, second, third);
+        }
+    }
+
+    /// <summary>Reads the material's referenced FLVER2 GX list without unpacking the rest of the model.</summary>
+    private static void ReadDs3GxScroll(FlverMaterial dest, BinaryReaderEx br, int offset)
+    {
+        const int headerSize = 12;
+        if (offset <= 0 || offset > br.Length - headerSize)
+            return;
+
+        br.StepIn(offset);
+        try
+        {
+            while (br.Position <= br.Length - headerSize)
+            {
+                var id = br.ReadASCII(4);
+                var variant = br.ReadInt32();
+                var size = br.ReadInt32();
+                var payloadSize = size - (long)headerSize;
+                if (payloadSize < 0 || payloadSize > br.Length - br.Position)
+                    break;
+
+                if (id == "GX20" && variant == 100 && payloadSize == 12)
+                    ApplyDs3GxScroll(dest, id, variant, br.ReadBytes(12), br.BigEndian);
+                else if (id == "GX07" && variant == 104 && payloadSize >= 88 && dest.Definition?.Water != null)
+                {
+                    ApplyDs3GxScroll(dest, id, variant, br.ReadBytes(88), br.BigEndian);
+                    br.Position += payloadSize - 88;
+                }
+                else
+                    br.Position += payloadSize;
+
+                if (br.Position <= br.Length - headerSize && br.GetInt32(br.Position) is int.MaxValue or -1)
+                    break;
+            }
+        }
+        finally
+        {
+            br.StepOut();
+        }
+    }
+
     private unsafe void ProcessMaterial(IFlverMaterial mat, FlverMaterial dest)
     {
         var curProject = Smithbox.Orchestrator.SelectedProject;
@@ -1659,6 +1765,13 @@ public class FlverResource : IResource, IDisposable
         dest.MaterialName = Path.GetFileNameWithoutExtension(mat.MTD);
         dest.FlverMaterialName = mat.Name;
         dest.Definition = GetMaterialDefinition(mat.MTD);
+
+        if (curProject.Descriptor.ProjectType == ProjectType.DS3 && mat is FLVER2.Material material &&
+            Flver is { } flver && material.GXIndex >= 0 && material.GXIndex < flver.GXLists.Count)
+        {
+            foreach (var item in flver.GXLists[material.GXIndex])
+                ApplyDs3GxScroll(dest, item.ID, item.Unk04, item.Data, flver.Header.BigEndian);
+        }
 
         // Before the buffer, whose size can depend on it (AllocateMaterialBuffer)
         foreach (IFlverTexture? texture in mat.Textures)
@@ -1827,6 +1940,9 @@ public class FlverResource : IResource, IDisposable
         dest.MaterialName = Path.GetFileNameWithoutExtension(mtd);
         dest.FlverMaterialName = matName;
         dest.Definition = GetMaterialDefinition(mtd);
+
+        if (curProject.Descriptor.ProjectType == ProjectType.DS3)
+            ReadDs3GxScroll(dest, br, mat.gxOffset);
 
         // TEMPORARY BB texture diagnostics (BbTextureDiag)
         if (BbTextureDiag.IsTracedModel(Context?.Name))
@@ -5365,7 +5481,10 @@ public class FlverResource : IResource, IDisposable
         public int OpacityUvIndex = -1;
 
         /// <summary>The FLVER UV set in the third UV slot of FlverLayoutUV3: an opacity's or a mask blend's mask's</summary>
-        public int ThirdUvIndex => OpacityUvIndex >= 0 ? OpacityUvIndex : Math.Max(MaskBlendUvIndex, 0);
+        public int ThirdUvIndex => Ds3WaterScroll is not null ? 2 : OpacityUvIndex >= 0 ? OpacityUvIndex : Math.Max(MaskBlendUvIndex, 0);
+
+        public Vector2? Ds3AlbedoScroll { get; set; }
+        public Ds3WaterFlow? Ds3WaterScroll { get; set; }
 
         /// <summary>The FLVER material's GX01 BlendMaskIntensity, which FC_BlendMaskParam is made from</summary>
         public float MaskBlendIntensity = 1f;

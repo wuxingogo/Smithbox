@@ -115,7 +115,7 @@ public sealed partial class RenderProfile
             MatbinTexturePaths = type is ProjectType.DB_NT or ProjectType.DB,
             Metallic = matbinGame,
             DesMaterials = type is ProjectType.DES,
-            MaterialLightingType = type is ProjectType.DES,
+            MaterialLightingType = type is ProjectType.DES or ProjectType.DS1R,
             SpeedTreeVertices = type is ProjectType.ER or ProjectType.NR,
             VertexAlphaOpacity = type is ProjectType.DS3
         };
